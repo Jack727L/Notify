@@ -1,6 +1,8 @@
 # Team-102-19
 
+## Project Proposal
 
+Our project proposal can be found at the [Project Proposal Wiki page](https://git.uwaterloo.ca/p259li/team-102-19/-/wikis/Project-Proposal)
 
 ## Getting started
 
