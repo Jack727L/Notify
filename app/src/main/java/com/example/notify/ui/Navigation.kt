@@ -6,11 +6,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.notify.ui.loginScreen.LoginScreen
 import com.example.notify.ui.loginScreen.SignUpScreen
+import com.example.notify.ui.search.SearchScreen
+
 
 sealed class Route {
     data class LoginScreen(val name:String = "Login"): Route()
     data class SignUpScreen(val name:String = "Signup"): Route()
-
+    data class SearchScreen(val name:String = "Search"): Route()
 }
 @Composable
 fun Navigation(navHostController: NavHostController) {
@@ -26,6 +28,15 @@ fun Navigation(navHostController: NavHostController) {
         }
         composable(route = Route.SignUpScreen().name) {
             SignUpScreen()
+        }
+        composable(route = Route.SearchScreen().name) {
+            SearchScreen(
+                onBackClick = {
+                    navHostController.navigate(
+                        Route.LoginScreen().name
+                    )
+                }
+            )
         }
     }
 }
