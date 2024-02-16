@@ -63,4 +63,5 @@ dependencies {
     implementation("androidx.compose.material3:material3-window-size-class:1.2.0")
     implementation("androidx.compose.material3:material3-adaptive:1.0.0-alpha06")
     implementation("androidx.compose.material3:material3-adaptive-navigation-suite:1.0.0-alpha03")
+    implementation ("com.github.ibrahimsn98:SmoothBottomBar:1.7.9")
 }
