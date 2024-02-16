@@ -18,7 +18,7 @@ sealed class Route {
 }
 @Composable
 fun Navigation(navHostController: NavHostController) {
-    NavHost(navController = navHostController, startDestination = Route.HomeScreen().name) {
+    NavHost(navController = navHostController, startDestination = Route.LoginScreen().name) {
         composable(route = Route.HomeScreen().name) {
             HomePage(navHostController)
         }
@@ -27,6 +27,11 @@ fun Navigation(navHostController: NavHostController) {
                 onSignUpClick = {
                     navHostController.navigate(
                         Route.SignUpScreen().name
+                    )
+                },
+                onLoginClick = {
+                    navHostController.navigate(
+                        Route.HomeScreen().name
                     )
                 }
             )
