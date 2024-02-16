@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -44,7 +45,7 @@ import com.example.notify.ui.theme.unfocusedTextFieldText
 
 
 @Composable
-fun LoginScreen(onSignUpClick: (Int) -> Unit) {
+fun LoginScreen(onSignUpClick: (Int) -> Unit, onLoginClick: () -> Unit) {
     Surface() {
         Column(modifier = Modifier.fillMaxSize()) {
             TopSection()
@@ -52,7 +53,7 @@ fun LoginScreen(onSignUpClick: (Int) -> Unit) {
             Column(modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 30.dp)) {
-                LogInSection()
+                LogInSection(onLoginClick)
                 Spacer(modifier = Modifier.height(36.dp))
                 CreateNew(onSignUpClick)
             }
@@ -99,13 +100,36 @@ private fun CreateNew(onSignUpClick: (Int) -> Unit) {
 
 
 @Composable
-private fun LogInSection() {
+private fun LogInSection(onLoginClick: () -> Unit) {
 
     val (email, onEmailChange) = rememberSaveable {
         mutableStateOf("")
     }
     val (password, onPasswordChange) = rememberSaveable {
         mutableStateOf("")
+    }
+
+    val showAlertMessage = rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    if (showAlertMessage.value) {
+        AlertDialog(
+            onDismissRequest = {showAlertMessage.value = false},
+            title = {Text("User Not Found")},
+            text = { Text(text = "User not found with the given email, please sign up first!")},
+            confirmButton = {
+                Button(
+                    onClick = {showAlertMessage.value = false},
+                    modifier = Modifier.padding(6.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.buttonContainer,
+                        contentColor = MaterialTheme.colorScheme.buttonContent
+                    )
+                ){
+                    Text(text = "confirm")
+                }
+            })
     }
 
     LoginTextField(
@@ -134,7 +158,13 @@ private fun LogInSection() {
         modifier = Modifier
             .fillMaxWidth()
             .height(40.dp),
-        onClick = {},
+        onClick = {
+            if (email == "person@uwaterloo.ca") {
+                onLoginClick()
+            } else {
+                showAlertMessage.value = true
+            }
+        },
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.buttonContainer,
             contentColor = MaterialTheme.colorScheme.buttonContent
