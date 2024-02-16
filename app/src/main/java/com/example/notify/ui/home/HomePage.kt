@@ -63,7 +63,7 @@ fun HomePage(navController: NavHostController) {
                     Button(onClick = { navController.navigate("search") }) {
                         Text("Search")
                     }
-                    Button(onClick = { navController.navigate("search") }) {
+                    Button(onClick = { navController.navigate("profile") }) {
                         Text("Profile")
                     }
                 }
@@ -126,14 +126,14 @@ private fun TopSection(navController: NavHostController) {
                     text = { Text("Profile") },
                     onClick = {
                         expanded = false
-                        navController.navigate("Search")
+                        navController.navigate("profile")
                     }
                 )
                 DropdownMenuItem(
                     text = { Text("Setting") },
                     onClick = {
                         expanded = false
-                        navController.navigate("Search")
+                        navController.navigate("setting")
                     }
                 )
                 DropdownMenuItem(
