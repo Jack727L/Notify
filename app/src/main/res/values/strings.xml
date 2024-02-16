@@ -15,4 +15,6 @@
     <string name="firstname">First Name\n</string>
     <string name="lastName">Last Name\n</string>
     <string name="confirmPassword">Confirm Password</string>
+    <string name="settings">Settings</string>
+    <string name="id">123123</string>
 </resources>

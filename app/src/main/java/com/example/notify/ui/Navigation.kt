@@ -1,5 +1,6 @@
 package com.example.notify.ui
 
+import SettingsScreen
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -8,6 +9,7 @@ import com.example.notify.ui.home.HomePage
 import com.example.notify.ui.loginScreen.LoginScreen
 import com.example.notify.ui.loginScreen.SignUpScreen
 import com.example.notify.ui.search.SearchScreen
+import com.example.notify.ui.profile.ProfileScreen
 
 
 sealed class Route {
@@ -46,6 +48,14 @@ fun Navigation(navHostController: NavHostController) {
                         Route.HomeScreen().name
                     )
                 }
+            )
+        }
+        composable(route = Route.ProfileScreen().name) {
+            ProfileScreen(
+            )
+        }
+        composable(route = Route.SettingsScreen().name) {
+            SettingsScreen(
             )
         }
     }
