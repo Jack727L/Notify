@@ -1,5 +1,6 @@
 package com.example.notify.ui.loginScreen
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,11 +17,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.notify.R
+import com.example.notify.ui.theme.Black
 import com.example.notify.ui.theme.buttonContainer
 import com.example.notify.ui.theme.buttonContent
 
@@ -42,6 +45,9 @@ fun SignUpScreen(
     val (confirmPassword, onConfirmPasswordChange) = rememberSaveable {
         mutableStateOf("")
     }
+
+    val uiColor = if (isSystemInDarkTheme()) Color.White else Black
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -53,7 +59,8 @@ fun SignUpScreen(
             modifier = Modifier
                 .padding(vertical = 20.dp)
                 .align(Alignment.Start),
-            style = MaterialTheme.typography.headlineLarge)
+            style = MaterialTheme.typography.headlineLarge,
+            color = uiColor)
 
         LoginTextField(
             label = stringResource(id = R.string.firstname),
