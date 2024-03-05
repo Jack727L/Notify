@@ -6,11 +6,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -34,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -43,32 +43,66 @@ import com.example.notify.ui.theme.Black
 @Composable
 fun HomePage(navController: NavHostController) {
     Surface {
-        Column(modifier = Modifier.fillMaxSize()) {
-            TopSection(navController)
-            Spacer(modifier = Modifier.height(36.dp))
-            Column(
+        BoxWithConstraints(modifier = Modifier.fillMaxWidth(1f)) {
+            val topHeight: Dp = 1000.dp
+            val centerHeight = 500.dp
+
+            Top(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(text = "Preview Files located here", modifier = Modifier.align(Alignment.CenterHorizontally))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    Button(onClick = { navController.navigate("home") }) {
-                        Text("Home")
-                    }
-                    Button(onClick = { navController.navigate("search") }) {
-                        Text("Search")
-                    }
-                    Button(onClick = { navController.navigate("profile") }) {
-                        Text("Profile")
-                    }
-                }
+                    .fillMaxWidth()
+                    .align(Alignment.TopCenter)
+                    .height(topHeight),
+                navController = navController
+            )
+            Bottom(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter),
+                navController = navController
+            )
+            Center(
+                modifier = Modifier
+                    .padding(start = 5.dp, end = 5.dp, bottom=100.dp)
+                    .fillMaxWidth()
+                    .height(centerHeight)
+                    .align(Alignment.BottomCenter),
+                navController = navController
+            )
+        }
+    }
+}
+
+@Composable
+fun Top(modifier: Modifier=Modifier, navController: NavHostController) {
+    Box(modifier) {
+        TopSection(navController)
+    }
+}
+
+@Composable
+fun Bottom(modifier: Modifier=Modifier, navController: NavHostController) {
+    Column(modifier) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            Button(onClick = { navController.navigate("home") }) {
+                Text("Home")
+            }
+            Button(onClick = { navController.navigate("search") }) {
+                Text("Search")
+            }
+            Button(onClick = { navController.navigate("profile") }) {
+                Text("Profile")
             }
         }
+    }
+}
+
+@Composable
+fun Center(modifier: Modifier=Modifier, navController: NavHostController) {
+    Box(modifier) {
+        NoteList(navController)
     }
 }
 
