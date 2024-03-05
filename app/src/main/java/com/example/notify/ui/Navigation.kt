@@ -6,10 +6,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.notify.ui.home.HomePage
-import com.example.notify.ui.loginScreen.LoginScreen
-import com.example.notify.ui.loginScreen.SignUpScreen
+import com.example.notify.ui.login.LoginScreen
 import com.example.notify.ui.profile.ProfileScreen
 import com.example.notify.ui.search.SearchScreen
+import com.example.notify.ui.signup.SignUpScreen
 
 
 sealed class Route {

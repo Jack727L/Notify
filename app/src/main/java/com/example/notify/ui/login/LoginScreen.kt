@@ -1,7 +1,9 @@
-package com.example.notify.ui.loginScreen
+package com.example.notify.ui.login
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,17 +18,22 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -36,16 +43,20 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.notify.R
 import com.example.notify.ui.theme.Black
 import com.example.notify.ui.theme.Roboto
 import com.example.notify.ui.theme.buttonContainer
 import com.example.notify.ui.theme.buttonContent
 import com.example.notify.ui.theme.unfocusedTextFieldText
+import com.example.notify.ui.utils.LoginTextField
+import kotlinx.coroutines.launch
 
 
 @Composable
-fun LoginScreen(onSignUpClick: (Int) -> Unit, onLoginClick: () -> Unit) {
+fun LoginScreen(onSignUpClick: (Int) -> Unit,
+                onLoginClick: () -> Unit) {
     Surface() {
         Column(modifier = Modifier.fillMaxSize()) {
             TopSection()
@@ -64,6 +75,7 @@ fun LoginScreen(onSignUpClick: (Int) -> Unit, onLoginClick: () -> Unit) {
 @Composable
 private fun CreateNew(onSignUpClick: (Int) -> Unit) {
     val uiColor = if (isSystemInDarkTheme()) Color.White else Black
+
     Box(
         modifier = Modifier
             .fillMaxHeight(fraction = 0.8f)
@@ -100,7 +112,8 @@ private fun CreateNew(onSignUpClick: (Int) -> Unit) {
 
 
 @Composable
-private fun LogInSection(onLoginClick: () -> Unit) {
+private fun LogInSection(onLoginClick: () -> Unit,
+                         viewModel: LogInViewModel = hiltViewModel()) {
 
     val (email, onEmailChange) = rememberSaveable {
         mutableStateOf("")
@@ -112,6 +125,10 @@ private fun LogInSection(onLoginClick: () -> Unit) {
     val showAlertMessage = rememberSaveable {
         mutableStateOf(false)
     }
+
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val state = viewModel.logInState.collectAsState(initial = null)
 
     if (showAlertMessage.value) {
         AlertDialog(
@@ -159,10 +176,8 @@ private fun LogInSection(onLoginClick: () -> Unit) {
             .fillMaxWidth()
             .height(40.dp),
         onClick = {
-            if (email == "person@uwaterloo.ca") {
-                onLoginClick()
-            } else {
-                showAlertMessage.value = true
+            scope.launch {
+                viewModel.loginUser(email, password)
             }
         },
         colors = ButtonDefaults.buttonColors(
@@ -176,6 +191,31 @@ private fun LogInSection(onLoginClick: () -> Unit) {
             style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Medium)
         )
     }
+
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+        if (state.value?.isLoading == true) {
+            CircularProgressIndicator()
+        }
+    }
+
+    LaunchedEffect(key1 = state.value?.isSuccess) {
+        scope.launch {
+            if (state.value?.isSuccess?.isNotEmpty() == true) {
+                val success = state.value?.isSuccess
+                Toast.makeText(context, "$success", Toast.LENGTH_LONG).show()
+                onLoginClick()
+            }
+        }
+    }
+    LaunchedEffect(key1 = state.value?.isError) {
+        scope.launch {
+            if (state.value?.isError?.isNotBlank() == true) {
+                val error = state.value?.isError
+                Toast.makeText(context, "$error", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
 }
 
 @Composable
