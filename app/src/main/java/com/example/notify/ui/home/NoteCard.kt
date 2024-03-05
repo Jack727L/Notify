@@ -48,7 +48,6 @@ fun NoteList(navController: NavHostController,) {
                     title = i.toString()
                 )
                 Spacer(modifier = Modifier.height(10.dp))
-
             }
         }
         Spacer(modifier=Modifier.width(10.dp))
