@@ -1,9 +1,11 @@
 package com.example.notify.ui.login
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.notify.Services.AuthService.Authentication
 import com.example.notify.Services.AuthService.Utils.Resource
+import com.example.notify.Services.UserService.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -12,7 +14,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LogInViewModel @Inject constructor (
-    private val auth: Authentication
+    private val auth: Authentication,
+    private val user: User
 ): ViewModel()
 {
     val _logInState = Channel<LogInState>()
@@ -23,6 +26,8 @@ class LogInViewModel @Inject constructor (
             result -> when(result) {
                 is Resource.Success -> {
                     _logInState.send(LogInState(isSuccess = "Sign In Success "))
+                    Log.i("user", "current user uid: " + user.getCurrentUserId().toString() +
+                    "\n email: " + user.getCurrentUserEmail().toString())
                 }
                 is Resource.Loading ->{
                     _logInState.send(LogInState(isLoading = true))
