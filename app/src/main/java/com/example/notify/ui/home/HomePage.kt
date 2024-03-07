@@ -6,12 +6,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -21,7 +18,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Surface
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -33,7 +30,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -42,30 +38,24 @@ import com.example.notify.ui.theme.Black
 
 @Composable
 fun HomePage(navController: NavHostController) {
-    Surface {
-        BoxWithConstraints(modifier = Modifier.fillMaxWidth(1f)) {
-            val topHeight: Dp = 1000.dp
-            val centerHeight = 500.dp
-
-            Top(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.TopCenter)
-                    .height(topHeight),
-                navController = navController
-            )
-            Bottom(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.BottomCenter),
-                navController = navController
-            )
+    Box {
+        Image(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(fraction = 0.45f),
+            painter = painterResource(id = R.drawable.shape),
+            contentDescription = null,
+            contentScale = ContentScale.FillBounds
+        )
+        Scaffold(
+            containerColor = Color.Transparent,
+            topBar = { TopSection(navController = navController) },
+            bottomBar = { Bottom (modifier = Modifier.fillMaxWidth(), navController=navController) }
+        ) { paddingValues ->
             Center(
                 modifier = Modifier
-                    .padding(start = 5.dp, end = 5.dp, bottom=100.dp)
                     .fillMaxWidth()
-                    .height(centerHeight)
-                    .align(Alignment.BottomCenter),
+                    .padding(paddingValues),
                 navController = navController
             )
         }
@@ -73,15 +63,8 @@ fun HomePage(navController: NavHostController) {
 }
 
 @Composable
-fun Top(modifier: Modifier=Modifier, navController: NavHostController) {
-    Box(modifier) {
-        TopSection(navController)
-    }
-}
-
-@Composable
 fun Bottom(modifier: Modifier=Modifier, navController: NavHostController) {
-    Column(modifier) {
+    Box(modifier) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
@@ -114,14 +97,6 @@ private fun TopSection(navController: NavHostController) {
     Box(
         contentAlignment = Alignment.TopCenter
     ) {
-        Image(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(fraction = 0.45f),
-            painter = painterResource(id = R.drawable.shape),
-            contentDescription = null,
-            contentScale = ContentScale.FillBounds
-        )
         Box(
             modifier = Modifier
                 .fillMaxWidth()
