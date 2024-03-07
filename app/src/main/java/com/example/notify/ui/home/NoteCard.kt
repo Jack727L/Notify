@@ -36,7 +36,7 @@ import com.example.notify.R
 fun NoteList(navController: NavHostController,) {
     Row(modifier = Modifier
         .fillMaxWidth()
-        .padding(horizontal = 16.dp)
+        .padding(16.dp)
         .verticalScroll(rememberScrollState()),
         horizontalArrangement = Arrangement.SpaceEvenly) {
         Column(modifier = Modifier.fillMaxWidth().weight(1f)) {

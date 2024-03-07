@@ -64,7 +64,7 @@ fun Navigation(navHostController: NavHostController) {
         }
         composable(route = Route.NoteScreen().name+"/{id}")
         {args ->
-            NoteScreen(args.arguments?.getString("id"))
+            NoteScreen(args.arguments?.getString("id"), navHostController)
         }
     }
 }
