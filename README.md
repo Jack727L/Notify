@@ -8,8 +8,9 @@ Our project proposal can be found at the [Project Proposal Wiki page](https://gi
 
 Our development journals can be found at the [Development Journal Wiki page](https://git.uwaterloo.ca/p259li/team-102-19/-/wikis/Development-Journals-and-Meeting-Minutes)
 
-# Notify Release Notes - Version 2.0.0
 ![](images/Notify.png)
+
+## Version 2.0.0
 
 **Release Date:** 8-Mar-2024
 
