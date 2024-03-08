@@ -8,15 +8,18 @@ Our project proposal can be found at the [Project Proposal Wiki page](https://gi
 
 Our development journals can be found at the [Development Journal Wiki page](https://git.uwaterloo.ca/p259li/team-102-19/-/wikis/Development-Journals-and-Meeting-Minutes)
 
-# Notify Release Notes - Version 1.0.0
+# Notify Release Notes - Version 2.0.0
 ![](images/Notify.png)
 
-**Release Date:** 16-Feb-2024
+**Release Date:** 8-Mar-2024
 
-We're thrilled to announce the first release of Notify, a cutting-edge note sharing app tailored for university students. This initial version lays the groundwork for a collaborative and intuitive platform designed to enhance your study and note-sharing experience.
+We are excited to announce the release of Notify version 2.0.0, which brings significant updates and new features to enhance the user experience. This release focuses on improving security with a new authentication system, enriching content interaction with PDF display capabilities, and introducing like and dislike buttons for user feedback.
 
-Checkout our release note [here](https://git.uwaterloo.ca/p259li/team-102-19/-/releases/1.0.0)
+Checkout our release note [here](https://git.uwaterloo.ca/p259li/team-102-19/-/releases/2.0.0)
+
+## Getting Started
+
+To get started with Notify, [download installer](/Notify 2.0.0.apk)
 
 Supporting device : Pixel 6 Pro
 
-[Download Installer](/Notify 1.0.0.apk)
