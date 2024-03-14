@@ -10,4 +10,6 @@
     <color name="beige">#FFF8E7</color>
     <color name="hazelnut">#CFB095</color>
     <color name="darkBrown">#140D07</color>
+    <color name="extraLightGray">#ECECEC</color>
+    <color name="yellow">#E1CD83</color>
 </resources>

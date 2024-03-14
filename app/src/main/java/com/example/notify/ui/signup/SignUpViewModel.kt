@@ -4,7 +4,7 @@ package com.example.notify.ui.signup
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.notify.Services.AuthService.Authentication
-import com.example.notify.Services.AuthService.Utils.Resource
+import com.example.notify.Services.Utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -23,7 +23,7 @@ class SignUpViewModel @Inject constructor (
         auth.registerUser(email,password).collect{
                 result -> when(result) {
             is Resource.Success -> {
-                _signUpState.send(SignUpState(isSuccess = "Sign In Success "))
+                _signUpState.send(SignUpState(isSuccess = "Sign In Success"))
             }
             is Resource.Loading ->{
                 _signUpState.send(SignUpState(isLoading = true))

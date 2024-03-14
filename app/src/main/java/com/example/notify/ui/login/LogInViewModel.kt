@@ -4,8 +4,8 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.notify.Services.AuthService.Authentication
-import com.example.notify.Services.AuthService.Utils.Resource
 import com.example.notify.Services.UserService.User
+import com.example.notify.Services.Utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow

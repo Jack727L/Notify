@@ -78,6 +78,9 @@ fun Bottom(modifier: Modifier=Modifier, navController: NavHostController) {
             Button(onClick = { navController.navigate("profile") }) {
                 Text("Profile")
             }
+            Button(onClick = {navController.navigate("upload")}) {
+                Text("+")
+            }
         }
     }
 }
