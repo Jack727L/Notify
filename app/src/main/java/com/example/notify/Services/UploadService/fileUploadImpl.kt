@@ -23,10 +23,12 @@ class FileUploadImpl  @Inject constructor (
         subject: String,
         courseNum: String,
         term: String,
-        year: String
+        year: String,
+        uid: String
     ) {
 
         var metadata = storageMetadata {
+            setCustomMetadata("uid", uid)
             contentType = "application/pdf"
             setCustomMetadata("subject", subject)
             setCustomMetadata("courseNum", courseNum)
@@ -35,13 +37,14 @@ class FileUploadImpl  @Inject constructor (
         }
 
         pdfFileUri?.let { uri ->
-            val mStorageRef = storageReference.child("${System.currentTimeMillis()}/$fileName")
+            val mStorageRef = storageReference.child("/$subject$courseNum/$uid/$fileName")
+            val fdbRef = databaseReference.child("$subject$courseNum")
             mStorageRef.putFile(uri, metadata).addOnSuccessListener {
                 mStorageRef.downloadUrl.addOnSuccessListener { downloadUri ->
 
-                    val pdfFile = PdfFile(fileName.orEmpty(), downloadUri.toString())
-                    databaseReference.push().key?.let { pushKey ->
-                        databaseReference.child(pushKey).setValue(pdfFile)
+                    val pdfFile = PdfFile(fileName.orEmpty(), downloadUri.toString(), uid, subject, courseNum, term, year, 0)
+                    fdbRef.push().key?.let { pushKey ->
+                        fdbRef.child(pushKey).setValue(pdfFile)
                             .addOnSuccessListener {
                                 toastGenerated.value = true
                                 msg.value = "Uploaded Successfully"

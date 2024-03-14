@@ -12,5 +12,6 @@ interface FileUpload {
                                 subject: String,
                                 courseNum: String,
                                 term: String,
-                                year: String)
+                                year: String,
+                                uid: String)
 }
