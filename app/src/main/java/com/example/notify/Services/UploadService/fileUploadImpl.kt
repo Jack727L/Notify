@@ -1,6 +1,7 @@
 package com.example.notify.Services.UploadService
 
 import android.net.Uri
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.storage.StorageReference
@@ -44,18 +45,21 @@ class FileUploadImpl  @Inject constructor (
                             .addOnSuccessListener {
                                 toastGenerated.value = true
                                 msg.value = "Uploaded Successfully"
+                                Log.i("upload", "Success! uploaded file: $fileName to realtime db")
                             }.addOnFailureListener { err ->
                                 toastGenerated.value = true
                                 msg.value = err.message.toString()
+                                Log.e("upload", "Failed to uploaded file: $fileName to realtime db")
                             }
                     }
                 }
             }.addOnProgressListener { uploadTask ->
                 uploadProgress.value = (uploadTask.bytesTransferred * 100 / uploadTask.totalByteCount).toFloat()
-
+                Log.i("upload", "Uploaded progress ${uploadProgress.value}")
             }.addOnFailureListener { err ->
                 toastGenerated.value = true
                 msg.value = err.message.toString()
+                Log.e("upload", "Failed to upload $fileName to storage")
             }
         }
     }
