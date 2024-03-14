@@ -11,6 +11,7 @@ import com.example.notify.ui.note.NoteScreen
 import com.example.notify.ui.profile.ProfileScreen
 import com.example.notify.ui.search.SearchScreen
 import com.example.notify.ui.signup.SignUpScreen
+import com.example.notify.ui.upload.UploadScreen
 
 
 sealed class Route {
@@ -21,6 +22,7 @@ sealed class Route {
     data class ProfileScreen(val name:String = "Profile"): Route()
     data class SettingsScreen(val name:String = "Setting"): Route()
     data class NoteScreen(val name:String = "Note"): Route()
+    data class UploadScreen(val name:String = "Upload"): Route()
 
 }
 @Composable
@@ -65,6 +67,9 @@ fun Navigation(navHostController: NavHostController) {
         composable(route = Route.NoteScreen().name+"/{id}")
         {args ->
             NoteScreen(args.arguments?.getString("id"), navHostController)
+        }
+        composable(route = Route.UploadScreen().name) {
+            UploadScreen(navHostController)
         }
     }
 }

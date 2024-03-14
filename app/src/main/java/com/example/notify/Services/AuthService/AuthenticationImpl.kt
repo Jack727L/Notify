@@ -1,6 +1,6 @@
 package com.example.notify.Services.AuthService
 
-import com.example.notify.Services.AuthService.Utils.Resource
+import com.example.notify.Services.Utils.Resource
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.Flow
