@@ -1,5 +1,6 @@
 package com.example.notify.ui.home
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -21,7 +22,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -40,6 +43,15 @@ import com.example.notify.ui.theme.Black
 
 @Composable
 fun HomePage(navController: NavHostController) {
+    val homePageViewModel: HomePageViewModel = viewModel()
+    LaunchedEffect(Unit) {
+        homePageViewModel.retrievePdfFiles()
+    }
+    // Tom just use this pdfFiles as the entire object, now it gets loaded automatically, so we are good to use this variable
+    val pdfFiles by homePageViewModel.pdfFiles.observeAsState(initial = emptyList())
+    pdfFiles.forEach { pdfFile ->
+        Log.d("HomePageViewModel", "Retrieved PDF File: ${pdfFile.fileName}")
+    }
     Box {
         Image(
             modifier = Modifier
@@ -84,9 +96,9 @@ fun Bottom(modifier: Modifier = Modifier, navController: NavHostController) {
             Button(onClick = { navController.navigate("upload") }) {
                 Text("+")
             }
-            Button(onClick = { homePageViewModel.retrievePdfFiles() }) {
-                Text("Test")
-            }
+//            Button(onClick = {  }) {
+//                Text("Test")
+//            }
         }
     }
 }

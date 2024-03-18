@@ -77,6 +77,7 @@ dependencies {
     implementation("com.google.firebase:firebase-auth:22.3.1")
     implementation("com.google.android.gms:play-services-auth:20.4.0")
     implementation ("com.github.barteksc:android-pdf-viewer:2.8.2")
+    implementation ("androidx.compose.runtime:runtime-livedata:1.6.3")
 }
 
 kapt {
