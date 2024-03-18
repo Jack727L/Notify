@@ -19,7 +19,7 @@ class HomePageViewModel : ViewModel() {
 
     // Initialize Firebase Storage and Database references
     private val storageReference = FirebaseStorage.getInstance().reference
-    private val databaseReference = FirebaseDatabase.getInstance().getReference("pdfs")
+    private val databaseReference = FirebaseDatabase.getInstance().getReference("pdfs/MATH235")
 
     // Initialize FileUploadImpl with Firebase references
     private val fileUploadService = FileUploadImpl(storageReference, databaseReference)
