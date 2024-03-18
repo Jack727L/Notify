@@ -78,7 +78,6 @@ fun HomePage(navController: NavHostController) {
 
 @Composable
 fun Bottom(modifier: Modifier = Modifier, navController: NavHostController) {
-    val homePageViewModel: HomePageViewModel = viewModel()
     Box(modifier) {
         Row(
             modifier = Modifier.fillMaxWidth(),
