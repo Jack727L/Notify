@@ -66,9 +66,7 @@ fun HomePage(navController: NavHostController) {
 
 @Composable
 fun Bottom(modifier: Modifier = Modifier, navController: NavHostController) {
-    // Obtain an instance of HomePageViewModel
     val homePageViewModel: HomePageViewModel = viewModel()
-
     Box(modifier) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -86,7 +84,6 @@ fun Bottom(modifier: Modifier = Modifier, navController: NavHostController) {
             Button(onClick = { navController.navigate("upload") }) {
                 Text("+")
             }
-            // Use the obtained instance of HomePageViewModel to call retrievePdfFiles
             Button(onClick = { homePageViewModel.retrievePdfFiles() }) {
                 Text("Test")
             }

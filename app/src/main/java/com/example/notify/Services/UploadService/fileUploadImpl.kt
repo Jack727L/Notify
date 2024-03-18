@@ -85,7 +85,6 @@ class FileUploadImpl  @Inject constructor (
                     Log.e("retrieving", "No Data Found")
                     callback.onError("No Data Found")
                 } else {
-                    // Call onSuccess on the callback instead of updating an adapter directly
                     callback.onSuccess(tempList)
                 }
             }

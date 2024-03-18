@@ -1,7 +1,6 @@
 package com.example.notify.ui.homePage
 
 import android.util.Log
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.notify.Services.UploadService.FileUploadImpl
@@ -15,15 +14,10 @@ class HomePageViewModel : ViewModel() {
     // This might include LiveData for dynamic content on the HomePage,
     // functions to handle button clicks, etc.
     private val _message = MutableLiveData<String>()
-    val message: LiveData<String> = _message
-
-    // Initialize Firebase Storage and Database references
+    // val message: LiveData<String> = _message
     private val storageReference = FirebaseStorage.getInstance().reference
     private val databaseReference = FirebaseDatabase.getInstance().getReference("pdfs/MATH235")
-
-    // Initialize FileUploadImpl with Firebase references
     private val fileUploadService = FileUploadImpl(storageReference, databaseReference)
-
     fun retrievePdfFiles() {
         fileUploadService.retrieveAllPdfFiles(object : PdfFilesRetrievalCallback {
             override fun onSuccess(pdfFiles: List<PdfFile>) {
@@ -37,7 +31,6 @@ class HomePageViewModel : ViewModel() {
                     Log.d("HomePageViewModel", "No PDF files found.")
                 }
             }
-
             override fun onError(errorMessage: String) {
                 _message.postValue("Error retrieving PDF files: $errorMessage")
                 Log.e("HomePageViewModel", "Error retrieving PDF files: $errorMessage")
