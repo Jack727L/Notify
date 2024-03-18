@@ -15,3 +15,8 @@ interface FileUpload {
                                 year: String,
                                 uid: String)
 }
+
+interface PdfFilesRetrievalCallback {
+    fun onSuccess(pdfFiles: List<PdfFile>)
+    fun onError(errorMessage: String)
+}

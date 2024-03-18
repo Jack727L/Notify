@@ -32,8 +32,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.notify.R
+import com.example.notify.ui.homePage.HomePageViewModel
 import com.example.notify.ui.theme.Black
 
 @Composable
@@ -63,7 +65,10 @@ fun HomePage(navController: NavHostController) {
 }
 
 @Composable
-fun Bottom(modifier: Modifier=Modifier, navController: NavHostController) {
+fun Bottom(modifier: Modifier = Modifier, navController: NavHostController) {
+    // Obtain an instance of HomePageViewModel
+    val homePageViewModel: HomePageViewModel = viewModel()
+
     Box(modifier) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -78,8 +83,12 @@ fun Bottom(modifier: Modifier=Modifier, navController: NavHostController) {
             Button(onClick = { navController.navigate("profile") }) {
                 Text("Profile")
             }
-            Button(onClick = {navController.navigate("upload")}) {
+            Button(onClick = { navController.navigate("upload") }) {
                 Text("+")
+            }
+            // Use the obtained instance of HomePageViewModel to call retrievePdfFiles
+            Button(onClick = { homePageViewModel.retrievePdfFiles() }) {
+                Text("Test")
             }
         }
     }
