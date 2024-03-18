@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.example.notify.Services.UploadService.FileUpload
 import com.example.notify.Services.UserService.User
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,7 +26,10 @@ class UploadViewModel @Inject constructor (
         term: String,
         year: String
         ) {
+        val myUuid = UUID.randomUUID()
+        val myUuidAsString = myUuid.toString()
+        val fileUUID = myUuidAsString + user.getCurrentUserId().orEmpty()
         fileUpload.uploadPdfFileToFirebase(displayToast, toastMsg, uploadProgress, fileName,pdfFileUri, subject, courseNum,
-            term, year, user.getCurrentUserId().orEmpty())
+            term, year, user.getCurrentUserId().orEmpty(), fileUUID)
     }
 }

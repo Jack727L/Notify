@@ -13,7 +13,8 @@ interface FileUpload {
                                 courseNum: String,
                                 term: String,
                                 year: String,
-                                uid: String)
+                                uid: String,
+                                uuid: String)
 }
 
 interface PdfFilesRetrievalCallback {

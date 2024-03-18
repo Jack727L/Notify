@@ -28,7 +28,8 @@ class FileUploadImpl  @Inject constructor (
         courseNum: String,
         term: String,
         year: String,
-        uid: String
+        uid: String,
+        uuid: String
     ) {
 
         var metadata = storageMetadata {
