@@ -43,8 +43,8 @@ class FileUploadImpl  @Inject constructor (
         }
 
         pdfFileUri?.let { uri ->
-            val mStorageRef = storageReference.child("/$subject$courseNum/$uid/$fileName")
-            val fdbRef = databaseReference.child("$subject$courseNum")
+            val mStorageRef = storageReference.child("/pdfs/$subject$courseNum/$uid/$fileName")
+            val fdbRef = databaseReference.child("/pdfs")
             mStorageRef.putFile(uri, metadata).addOnSuccessListener {
                 mStorageRef.downloadUrl.addOnSuccessListener { downloadUri ->
                     fdbRef.push().key?.let { pushKey ->

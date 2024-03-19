@@ -26,8 +26,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providesAuthImpl(firebaseAuth: FirebaseAuth): Authentication {
-        return AuthenticationImpl(firebaseAuth)
+    fun providesAuthImpl(firebaseAuth: FirebaseAuth, databaseReference: DatabaseReference): Authentication {
+        return AuthenticationImpl(firebaseAuth, databaseReference)
     }
     @Provides
     @Singleton
@@ -37,11 +37,11 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideFirebaseStorage() = FirebaseStorage.getInstance().reference.child("pdfs")
+    fun provideFirebaseStorage() = FirebaseStorage.getInstance().reference
 
     @Provides
     @Singleton
-    fun provideFirebaseDatabase() = FirebaseDatabase.getInstance().reference.child("pdfs")
+    fun provideFirebaseDatabase() = FirebaseDatabase.getInstance().reference
 
     @Provides
     @Singleton

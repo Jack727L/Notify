@@ -48,7 +48,7 @@ fun Navigation(navHostController: NavHostController) {
             )
         }
         composable(route = Route.SignUpScreen().name) {
-            SignUpScreen()
+            SignUpScreen(navHostController)
         }
         composable(route = Route.SearchScreen().name) {
             SearchScreen(
