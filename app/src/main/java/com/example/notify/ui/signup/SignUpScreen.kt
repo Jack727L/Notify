@@ -31,6 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.example.notify.R
 import com.example.notify.ui.theme.Black
 import com.example.notify.ui.theme.buttonContainer
@@ -40,7 +41,8 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun SignUpScreen(
-    viewModel: SignUpViewModel = hiltViewModel()
+        navHostController: NavHostController,
+        viewModel: SignUpViewModel = hiltViewModel()
 ) {
     val (firstName, onFirstNameChange) = rememberSaveable {
         mutableStateOf("")
@@ -134,8 +136,12 @@ fun SignUpScreen(
                 .fillMaxWidth()
                 .height(50.dp),
             onClick = {
-                scope.launch {
-                    viewModel.registerUser(email, password)
+                if (!email.endsWith("@uwaterloo.ca")) {
+                    Toast.makeText(context, "Please enter a valid waterloo email", Toast.LENGTH_LONG).show()
+                } else {
+                    scope.launch {
+                        viewModel.registerUser(email, password, firstName, lastName)
+                    }
                 }
             },
             colors = ButtonDefaults.buttonColors(
@@ -162,6 +168,7 @@ fun SignUpScreen(
                 if (state.value?.isSuccess?.isNotEmpty() == true) {
                     val success = state.value?.isSuccess
                     Toast.makeText(context, "$success", Toast.LENGTH_LONG).show()
+                    navHostController.navigate("Login")
                 }
             }
         }
