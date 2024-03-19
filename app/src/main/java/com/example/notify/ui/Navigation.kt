@@ -3,8 +3,10 @@ package com.example.notify.ui
 import SettingsScreen
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.example.notify.ui.home.HomePage
 import com.example.notify.ui.login.LoginScreen
 import com.example.notify.ui.note.NoteScreen
@@ -64,9 +66,17 @@ fun Navigation(navHostController: NavHostController) {
             SettingsScreen(
             )
         }
-        composable(route = Route.NoteScreen().name+"/{id}")
+        composable(
+            route = Route.NoteScreen().name+"/{id}/{downloadUrl}",
+            arguments = listOf(
+                navArgument("id") { type = NavType.StringType},
+                navArgument("downloadUrl") { type = NavType.StringType},
+            )
+        )
         {args ->
-            NoteScreen(args.arguments?.getString("id"), navHostController)
+            val id = args.arguments?.getString("id")
+            val downloadUrl = args.arguments?.getString("downloadUrl")
+            NoteScreen(id, downloadUrl, navHostController)
         }
         composable(route = Route.UploadScreen().name) {
             UploadScreen(navHostController)

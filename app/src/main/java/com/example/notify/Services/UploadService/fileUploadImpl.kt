@@ -39,6 +39,7 @@ class FileUploadImpl  @Inject constructor (
             setCustomMetadata("courseNum", courseNum)
             setCustomMetadata("term", term)
             setCustomMetadata("year", year)
+            setCustomMetadata("uuid", uuid)
         }
 
         pdfFileUri?.let { uri ->
@@ -47,7 +48,7 @@ class FileUploadImpl  @Inject constructor (
             mStorageRef.putFile(uri, metadata).addOnSuccessListener {
                 mStorageRef.downloadUrl.addOnSuccessListener { downloadUri ->
 
-                    val pdfFile = PdfFile(fileName.orEmpty(), downloadUri.toString(), uid, subject, courseNum, term, year, 0)
+                    val pdfFile = PdfFile(fileName.orEmpty(), downloadUri.toString(), uid, subject, courseNum, term, year, 0, uuid)
                     fdbRef.push().key?.let { pushKey ->
                         fdbRef.child(pushKey).setValue(pdfFile)
                             .addOnSuccessListener {

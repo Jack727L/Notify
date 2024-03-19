@@ -30,6 +30,7 @@ import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -46,7 +47,6 @@ import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
@@ -55,20 +55,26 @@ import androidx.navigation.NavHostController
 import com.example.notify.R
 import com.example.notify.databinding.PdfViewBinding
 import com.example.notify.ui.theme.Black
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.io.InputStream
+import java.net.URL
 
 @Composable
-fun NoteScreen(id: String?, navController: NavHostController) {
-    val context = LocalContext.current
-    val filename = "cheat_sheet.pdf"
-    val fileInputStream = context.assets.open(filename)
-    val byteArray = fileInputStream.readBytes()
-
-    PdfView(byteArray = byteArray, navController=navController)
+fun NoteScreen(id: String?, downloadUrl: String?, navController: NavHostController) {
+    var input: InputStream? by remember { mutableStateOf(null) }
+    LaunchedEffect(Unit){
+        withContext(Dispatchers.IO) {
+            val temp = URL(downloadUrl).openStream()
+            input = temp
+        }
+    }
+    PdfView(downloadUrl = input, navController=navController)
 }
 
 @Composable
 fun PdfView(
-    byteArray: ByteArray,
+    downloadUrl: InputStream?,
     navController: NavHostController
 ) {
     Box {
@@ -90,7 +96,7 @@ fun PdfView(
                     .fillMaxWidth()
                     .padding(paddingValues)
                     .background(Color.Transparent),
-                byteArray = byteArray
+                downloadUrl = downloadUrl
             )
         }
     }
@@ -98,22 +104,23 @@ fun PdfView(
 }
 
 @Composable
-private fun Center(modifier: Modifier=Modifier, byteArray: ByteArray) {
-    Box(modifier) {
-        AndroidView(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(0.dp, 10.dp, 0.dp, 10.dp),
-            factory = { context ->
-                PdfViewBinding.inflate(LayoutInflater.from(context))
-                    .apply {
-                        pdfView.fromBytes(byteArray).load()
-                    }
-                    .root
-            },
-        )
+private fun Center(modifier: Modifier=Modifier, downloadUrl: InputStream?) {
+    if (downloadUrl != null) {
+        Box(modifier) {
+            AndroidView(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(0.dp, 10.dp, 0.dp, 10.dp),
+                factory = { context ->
+                    PdfViewBinding.inflate(LayoutInflater.from(context))
+                        .apply {
+                            pdfView.fromStream(downloadUrl).load()
+                        }
+                        .root
+                },
+            )
+        }
     }
-
 }
 
 @Composable
