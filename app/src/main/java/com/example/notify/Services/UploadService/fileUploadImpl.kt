@@ -3,7 +3,11 @@ package com.example.notify.Services.UploadService
 import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.MutableState
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.storageMetadata
 import javax.inject.Inject
@@ -24,7 +28,8 @@ class FileUploadImpl  @Inject constructor (
         courseNum: String,
         term: String,
         year: String,
-        uid: String
+        uid: String,
+        uuid: String
     ) {
 
         var metadata = storageMetadata {
@@ -34,6 +39,7 @@ class FileUploadImpl  @Inject constructor (
             setCustomMetadata("courseNum", courseNum)
             setCustomMetadata("term", term)
             setCustomMetadata("year", year)
+            setCustomMetadata("uuid", uuid)
         }
 
         pdfFileUri?.let { uri ->
@@ -42,7 +48,7 @@ class FileUploadImpl  @Inject constructor (
             mStorageRef.putFile(uri, metadata).addOnSuccessListener {
                 mStorageRef.downloadUrl.addOnSuccessListener { downloadUri ->
 
-                    val pdfFile = PdfFile(fileName.orEmpty(), downloadUri.toString(), uid, subject, courseNum, term, year, 0)
+                    val pdfFile = PdfFile(fileName.orEmpty(), downloadUri.toString(), uid, subject, courseNum, term, year, 0, uuid)
                     fdbRef.push().key?.let { pushKey ->
                         fdbRef.child(pushKey).setValue(pdfFile)
                             .addOnSuccessListener {
@@ -65,6 +71,31 @@ class FileUploadImpl  @Inject constructor (
                 Log.e("upload", "Failed to upload $fileName to storage")
             }
         }
+    }
+    fun retrieveAllPdfFiles(callback: PdfFilesRetrievalCallback) {
+        val databaseReference = FirebaseDatabase.getInstance().reference.child("pdfs/MATH235")
+        databaseReference.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val tempList = mutableListOf<PdfFile>()
+                snapshot.children.forEach { childSnapshot ->
+                    val pdfFile = childSnapshot.getValue(PdfFile::class.java)
+                    pdfFile?.let {
+                        tempList.add(it)
+                    }
+                }
+                if (tempList.isEmpty()) {
+                    Log.e("retrieving", "No Data Found")
+                    callback.onError("No Data Found")
+                } else {
+                    callback.onSuccess(tempList)
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("retrieving", "Error retrieving data", error.toException())
+                callback.onError(error.toException().message ?: "Error retrieving data")
+            }
+        })
     }
 }
 

@@ -13,5 +13,11 @@ interface FileUpload {
                                 courseNum: String,
                                 term: String,
                                 year: String,
-                                uid: String)
+                                uid: String,
+                                uuid: String)
+}
+
+interface PdfFilesRetrievalCallback {
+    fun onSuccess(pdfFiles: List<PdfFile>)
+    fun onError(errorMessage: String)
 }
