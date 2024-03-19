@@ -7,22 +7,22 @@ import com.example.notify.Services.fileRetrieve.fileInfo
 class NoteScreenModel : ViewModel()  {
     private val infoRetrieve = fileInfo()
 
-    fun fetchLikes(downloadUrl: String) {
-        infoRetrieve.fetchLikesForDownloadUrl(downloadUrl) { likes ->
+    fun fetchLikes(pushKey: String) {
+        infoRetrieve.fetchLikesForPushKey(pushKey) { likes ->
             if (likes != null) {
-                Log.d("PdfModel", "Likes for $downloadUrl: $likes")
+                Log.d("PdfModel", "Likes for $pushKey: $likes")
             } else {
-                Log.d("PdfModel", "No file found for $downloadUrl")
+                Log.d("PdfModel", "No file found for $pushKey")
             }
         }
     }
 
-    fun incrementLikes(downloadUrl: String) {
-        infoRetrieve.updateLikesForDownloadUrl(downloadUrl)
+    fun incrementLikes(pushKey: String) {
+        infoRetrieve.incrementLikesBasedOnKey(pushKey)
     }
 
-    fun decrementLikes(downloadUrl: String) {
-        infoRetrieve.decrementLikesForDownloadUrl(downloadUrl)
+    fun decrementLikes(pushKey: String) {
+        infoRetrieve.decrementLikesBasedOnKey(pushKey)
     }
 
 }
