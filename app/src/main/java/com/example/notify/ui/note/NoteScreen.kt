@@ -64,8 +64,8 @@ import java.net.URL
 @Composable
 fun NoteScreen(id: String?, downloadUrl: String?, navController: NavHostController) {
     // this increment likes
-//    val noteScreenModel: NoteScreenModel = viewModel()
-//    noteScreenModel.incrementLikes("-NtJd5L9PjFUUXvCaimX")
+    val noteScreenModel: NoteScreenModel = viewModel()
+    noteScreenModel.incrementLikes("-NtJd5L9PjFUUXvCaimX", "oWAzfDOD2XX6islOeF93SlLwWoc2")
     var input: InputStream? by remember { mutableStateOf(null) }
     LaunchedEffect(Unit){
         withContext(Dispatchers.IO) {

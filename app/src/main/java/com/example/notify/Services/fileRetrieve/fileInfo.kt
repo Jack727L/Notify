@@ -25,7 +25,13 @@ class fileInfo {
         })
     }
 
-    fun incrementLikesBasedOnKey(pushKey: String) {
+    fun incrementLikesBasedOnKey(pushKey: String, userId: String) {
+//        val userLikeReference = databaseReference.child(pushKey).child(userId).child("like")
+//        userLikeReference.setValue(true).addOnSuccessListener {
+//            Log.d("FirebaseService", "Post liked by user $userId under pushKey $pushKey")
+//        }.addOnFailureListener { exception ->
+//            Log.w("FirebaseService", "Error setting like for user $userId under pushKey $pushKey", exception)
+//        }
         val specificReference = databaseReference.child(pushKey)
         specificReference.runTransaction(object : Transaction.Handler {
             override fun doTransaction(mutableData: MutableData): Transaction.Result {
@@ -42,7 +48,13 @@ class fileInfo {
             }
         })
     }
-    fun decrementLikesBasedOnKey(pushKey: String) {
+    fun decrementLikesBasedOnKey(pushKey: String, userId: String) {
+//        val userLikeReference = databaseReference.child(pushKey).child("likes").child(userId).child("like")
+//        userLikeReference.setValue(false).addOnSuccessListener {
+//            Log.d("FirebaseService", "Post unliked by user $userId under pushKey $pushKey")
+//        }.addOnFailureListener { exception ->
+//            Log.w("FirebaseService", "Error setting like for user $userId under pushKey $pushKey", exception)
+//        }
         val specificReference = databaseReference.child(pushKey)
         specificReference.runTransaction(object : Transaction.Handler {
             override fun doTransaction(mutableData: MutableData): Transaction.Result {

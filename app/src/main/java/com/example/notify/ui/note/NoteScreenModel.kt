@@ -17,12 +17,12 @@ class NoteScreenModel : ViewModel()  {
         }
     }
 
-    fun incrementLikes(pushKey: String) {
-        infoRetrieve.incrementLikesBasedOnKey(pushKey)
+    fun incrementLikes(pushKey: String, userId: String) {
+        infoRetrieve.incrementLikesBasedOnKey(pushKey, userId)
     }
 
-    fun decrementLikes(pushKey: String) {
-        infoRetrieve.decrementLikesBasedOnKey(pushKey)
+    fun decrementLikes(pushKey: String, userId: String) {
+        infoRetrieve.decrementLikesBasedOnKey(pushKey, userId)
     }
 
 }
