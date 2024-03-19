@@ -21,4 +21,8 @@ class NoteScreenModel : ViewModel()  {
         infoRetrieve.updateLikesForDownloadUrl(downloadUrl)
     }
 
+    fun decrementLikes(downloadUrl: String) {
+        infoRetrieve.decrementLikesForDownloadUrl(downloadUrl)
+    }
+
 }

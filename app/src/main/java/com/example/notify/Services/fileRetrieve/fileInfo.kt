@@ -47,4 +47,23 @@ class fileInfo {
             }
         })
     }
+    fun decrementLikesForDownloadUrl(downloadUrl: String) {
+        databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                dataSnapshot.children.forEach { childSnapshot ->
+                    val url = childSnapshot.child("downloadUrl").getValue(String::class.java)
+                    if (url == downloadUrl) {
+                        val currentLikes = childSnapshot.child("likes").getValue(Int::class.java) ?: 0
+                        val newLikes = currentLikes - 1
+                        childSnapshot.ref.child("likes").setValue(newLikes)
+                        return
+                    }
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.w("FirebaseService", "updateLikesForDownloadUrl:onCancelled", databaseError.toException())
+            }
+        })
+    }
 }
