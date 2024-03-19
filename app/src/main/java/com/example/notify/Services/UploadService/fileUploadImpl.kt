@@ -47,9 +47,8 @@ class FileUploadImpl  @Inject constructor (
             val fdbRef = databaseReference.child("$subject$courseNum")
             mStorageRef.putFile(uri, metadata).addOnSuccessListener {
                 mStorageRef.downloadUrl.addOnSuccessListener { downloadUri ->
-
-                    val pdfFile = PdfFile(fileName.orEmpty(), downloadUri.toString(), uid, subject, courseNum, term, year, 0, uuid)
                     fdbRef.push().key?.let { pushKey ->
+                        val pdfFile = PdfFile(fileName.orEmpty(), downloadUri.toString(), uid, subject, courseNum, term, year, 0, uuid, pushKey)
                         fdbRef.child(pushKey).setValue(pdfFile)
                             .addOnSuccessListener {
                                 toastGenerated.value = true
