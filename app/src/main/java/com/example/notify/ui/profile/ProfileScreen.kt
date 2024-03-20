@@ -60,7 +60,7 @@ fun ProfileScreen(id: String, currentUserId: String, currentDisplay: String, nav
         }
         else -> {
             LaunchedEffect(Unit) {
-                profileScreenModel.retrieveUserPdfFiles(id, "likes")
+                profileScreenModel.retrieveUserPdfFiles(id, "posts")
             }
         }
     }
