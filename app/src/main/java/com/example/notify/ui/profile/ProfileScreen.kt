@@ -25,6 +25,18 @@ import com.example.notify.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen() {
+    // this is the implementation for retrieving all of the collected files, use similar method to pull all of the liked files as well,
+    // modify the string to place either "likes" or "collects" to return corresponding information, if the list is null, then it means
+    // no files are liked/collected
+//    val profileScreenModel: ProfileScreenModel = viewModel()
+//    LaunchedEffect(Unit) {
+//        profileScreenModel.retrieveUserPdfFiles("3EDy3pXfeAVVDC4gAIdY8ytRGNm1", "likes")
+//    }
+//    // Tom just use this pdfFiles as the entire object, now it gets loaded automatically, so we are good to use this variable
+//    val pdfFiles by profileScreenModel.pdfFiles.observeAsState(initial = emptyList())
+//    pdfFiles.forEach { pdfFile ->
+//        Log.d("ProfileScreenModel", "Retrieved PDF File: ${pdfFile.fileName}")
+//    }
     Scaffold(
         topBar = {
             TopAppBar(title = { Text(text = stringResource(id = R.string.id)) })

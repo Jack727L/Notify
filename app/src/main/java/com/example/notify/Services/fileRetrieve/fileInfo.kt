@@ -1,6 +1,8 @@
 package com.example.notify.Services.fileRetrieve
 
 import android.util.Log
+import com.example.notify.Services.UploadService.PdfFile
+import com.example.notify.Services.UploadService.PdfFilesRetrievalCallback
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -93,5 +95,56 @@ class fileInfo {
             }
         }
     }
-
+    // retrieve all collects files, the intake will be the current user id
+    fun retrieveUserCollectedPdfFiles(userId: String, like_or_collect: String, callback: PdfFilesRetrievalCallback) {
+        var userCollectsReference = userDatabaseReference.child(userId).child("user_collects")
+        if (like_or_collect == "likes") {
+            userCollectsReference = userDatabaseReference.child(userId).child("user_collects")
+        }
+        // check for each pushKey for the user
+        userCollectsReference.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(userSnapshot: DataSnapshot) {
+                val pushKeys = userSnapshot.children.mapNotNull { it.key }
+                if (pushKeys.isEmpty()) {
+                    Log.e("retrieving", "User has no collects")
+                    callback.onError("User has no collects")
+                    return
+                }
+                val tempList = mutableListOf<PdfFile>()
+                val databaseReference = FirebaseDatabase.getInstance().reference.child("pdfs")
+                var completedRequests = 0
+                // match that push key with the file under pdfs path
+                pushKeys.forEach { pushKey ->
+                    databaseReference.child(pushKey).addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onDataChange(pdfSnapshot: DataSnapshot) {
+                            val pdfFile = pdfSnapshot.getValue(PdfFile::class.java)
+                            pdfFile?.let {
+                                tempList.add(it)
+                            }
+                            completedRequests++
+                            if (completedRequests == pushKeys.size) {
+                                if (tempList.isEmpty()) {
+                                    Log.e("retrieving", "No matching PDF files found")
+                                    callback.onError("No matching PDF files found")
+                                } else {
+                                    callback.onSuccess(tempList)
+                                }
+                            }
+                        }
+                        override fun onCancelled(pdfError: DatabaseError) {
+                            completedRequests++
+                            Log.e("retrieving", "Error retrieving PDF file for pushKey $pushKey", pdfError.toException())
+                            if (completedRequests == pushKeys.size && tempList.isEmpty()) {
+                                callback.onError("Error retrieving PDF files")
+                            }
+                        }
+                    })
+                }
+            }
+            override fun onCancelled(userError: DatabaseError) {
+                Log.e("retrieving", "Error retrieving user collects", userError.toException())
+                callback.onError(userError.toException().message ?: "Error retrieving user collects")
+            }
+        })
+    }
 }

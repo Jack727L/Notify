@@ -51,6 +51,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.notify.R
 import com.example.notify.databinding.PdfViewBinding
@@ -63,8 +64,8 @@ import java.net.URL
 @Composable
 fun NoteScreen(id: String?, downloadUrl: String?, navController: NavHostController) {
     // this save to collects
-//    val noteScreenModel: NoteScreenModel = viewModel()
-//    noteScreenModel.updateCollects("-NtMAOiVK9dpemHAxJeI", "3EDy3pXfeAVVDC4gAIdY8ytRGNm1", true)
+    val noteScreenModel: NoteScreenModel = viewModel()
+    noteScreenModel.updateCollects("-NtObnFbHeUeUGma5JmG", "3EDy3pXfeAVVDC4gAIdY8ytRGNm1", true)
     var input: InputStream? by remember { mutableStateOf(null) }
     LaunchedEffect(Unit){
         withContext(Dispatchers.IO) {
