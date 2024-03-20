@@ -164,6 +164,9 @@ private fun Bottom(modifier:Modifier = Modifier, profileScreenModel: ProfileScre
 
     noteScreenModel.fetchLikes(pushKey)
     favorite = noteScreenModel.getLikes()
+
+    noteScreenModel.fetchCollects(pushKey)
+    collect = noteScreenModel.getCollects()
     val uiColor = if (isSystemInDarkTheme()) Color.White else Black
 
     Box(modifier=modifier) {
@@ -193,16 +196,16 @@ private fun Bottom(modifier:Modifier = Modifier, profileScreenModel: ProfileScre
             CollectButton(
                 addCollects={
                     noteScreenModel.updateCollects(pushKey, currentUserId, true)
-//                    noteScreenModel.fetchCollects("-NtObyjLaEoNAyVAp-b_")
+                    noteScreenModel.fetchCollects(pushKey)
                     Handler(Looper.getMainLooper()).postDelayed({
-                        favorite = noteScreenModel.getLikes()
+                        collect = noteScreenModel.getCollects()
                     }, 100)
                 },
                 subCollects={
                     noteScreenModel.updateCollects(pushKey, currentUserId, false)
-//                    noteScreenModel.fetchCollects("-NtObyjLaEoNAyVAp-b_")
+                    noteScreenModel.fetchCollects(pushKey)
                     Handler(Looper.getMainLooper()).postDelayed({
-                        favorite = noteScreenModel.getLikes()
+                        collect = noteScreenModel.getCollects()
                     }, 100)
                 },
                 color=uiColor

@@ -31,8 +31,8 @@ class fileInfo {
         val specificReference = databaseReference.child(pushKey)
         specificReference.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val likes = dataSnapshot.child("collects").getValue(Int::class.java)
-                callback(likes)
+                val collects = dataSnapshot.child("collects").getValue(Int::class.java)
+                callback(collects)
             }
             override fun onCancelled(databaseError: DatabaseError) {
                 Log.w("FirebaseService", "fetchLikesForPushKey:onCancelled", databaseError.toException())
@@ -99,6 +99,21 @@ class fileInfo {
             }.addOnFailureListener { exception ->
                 Log.w("FirebaseService", "Error setting like for user $userId with pushKey $pushKey", exception)
             }
+            val specificReference = databaseReference.child(pushKey)
+            specificReference.runTransaction(object : Transaction.Handler {
+                override fun doTransaction(mutableData: MutableData): Transaction.Result {
+                    val currentCollects = mutableData.child("collects").getValue(Int::class.java) ?: 0
+                    mutableData.child("collects").value = currentCollects + 1
+                    return Transaction.success(mutableData)
+                }
+                override fun onComplete(databaseError: DatabaseError?, committed: Boolean, dataSnapshot: DataSnapshot?) {
+                    if (databaseError != null) {
+                        Log.w("FirebaseService", "updateCollectsForPushKey:onComplete:error", databaseError.toException())
+                    } else if (committed) {
+                        Log.d("FirebaseService", "Collects successfully incremented for $pushKey")
+                    }
+                }
+            })
         } else {
             // Decrement like
             userLikeDatabaseReference.removeValue().addOnSuccessListener {
@@ -106,6 +121,21 @@ class fileInfo {
             }.addOnFailureListener { exception ->
                 Log.w("FirebaseService", "Error removing like for user $userId with pushKey $pushKey", exception)
             }
+            val specificReference = databaseReference.child(pushKey)
+            specificReference.runTransaction(object : Transaction.Handler {
+                override fun doTransaction(mutableData: MutableData): Transaction.Result {
+                    val currentCollects = mutableData.child("collects").getValue(Int::class.java) ?: 0
+                    mutableData.child("collects").value = (currentCollects - 1).coerceAtLeast(0) // Prevent negative likes
+                    return Transaction.success(mutableData)
+                }
+                override fun onComplete(databaseError: DatabaseError?, committed: Boolean, dataSnapshot: DataSnapshot?) {
+                    if (databaseError != null) {
+                        Log.w("FirebaseService", "updateCollectsForPushKey:onComplete:error", databaseError.toException())
+                    } else if (committed) {
+                        Log.d("FirebaseService", "Collects successfully decremented for $pushKey")
+                    }
+                }
+            })
         }
     }
     // retrieve all collects files, the intake will be the current user id

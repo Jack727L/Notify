@@ -8,9 +8,15 @@ import java.util.concurrent.ArrayBlockingQueue
 class NoteScreenModel : ViewModel()  {
     private val infoRetrieve = fileInfo()
     private var like = 0
+    private var collect = 0
+
 
     fun getLikes():Int {
         return like
+    }
+
+    fun getCollects():Int {
+        return collect
     }
 
     fun fetchLikes(pushKey: String) {
@@ -30,13 +36,13 @@ class NoteScreenModel : ViewModel()  {
         Log.d("PdfModelLike", like.toString())
     }
     fun fetchCollects(pushKey: String) {
-        infoRetrieve.fetchColletsForPushKey(pushKey) { likes ->
-            if (likes != null) {
-                Log.d("PdfModel", "Collects for $pushKey: $likes")
+        infoRetrieve.fetchColletsForPushKey(pushKey) { collects ->
+            if (collects != null) {
+                Log.d("PdfModel", "Collects for $pushKey: $collects")
                 val dataQueue = ArrayBlockingQueue<Int>(1)
-                dataQueue.put(likes)
-                like = dataQueue.take()
-                Log.d("PdfModelCollect1", like.toString())
+                dataQueue.put(collects)
+                collect = dataQueue.take()
+                Log.d("PdfModelCollect1", collect.toString())
             }
             else {
                 Log.d("PdfModel", "No file found for $pushKey")
