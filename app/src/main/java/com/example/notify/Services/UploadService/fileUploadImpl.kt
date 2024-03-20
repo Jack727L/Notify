@@ -72,7 +72,7 @@ class FileUploadImpl  @Inject constructor (
         }
     }
     fun retrieveAllPdfFiles(callback: PdfFilesRetrievalCallback) {
-        val databaseReference = FirebaseDatabase.getInstance().reference.child("pdfs/MATH235")
+        val databaseReference = FirebaseDatabase.getInstance().reference.child("pdfs")
         databaseReference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val tempList = mutableListOf<PdfFile>()
