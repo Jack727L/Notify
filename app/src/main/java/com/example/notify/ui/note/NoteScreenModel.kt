@@ -29,6 +29,22 @@ class NoteScreenModel : ViewModel()  {
 
         Log.d("PdfModelLike", like.toString())
     }
+    fun fetchCollects(pushKey: String) {
+        infoRetrieve.fetchColletsForPushKey(pushKey) { likes ->
+            if (likes != null) {
+                Log.d("PdfModel", "Collects for $pushKey: $likes")
+                val dataQueue = ArrayBlockingQueue<Int>(1)
+                dataQueue.put(likes)
+                like = dataQueue.take()
+                Log.d("PdfModelCollect1", like.toString())
+            }
+            else {
+                Log.d("PdfModel", "No file found for $pushKey")
+            }
+        }
+
+        Log.d("PdfModelLike", like.toString())
+    }
     // update Likes takes in a pushKey of the current file, the current user id, and a boolean to represent if you want to increase the like or decrease it
     fun updateLikes(pushKey: String, userId: String, increment: Boolean) {
         infoRetrieve.updateLikesBasedOnPushkey(pushKey, userId, increment)

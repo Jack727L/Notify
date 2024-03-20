@@ -48,7 +48,14 @@ class FileUploadImpl  @Inject constructor (
             mStorageRef.putFile(uri, metadata).addOnSuccessListener {
                 mStorageRef.downloadUrl.addOnSuccessListener { downloadUri ->
                     fdbRef.push().key?.let { pushKey ->
-                        val pdfFile = PdfFile(fileName.orEmpty(), downloadUri.toString(), uid, subject, courseNum, term, year, 0, uuid, pushKey)
+                        val pdfFile = PdfFile(fileName.orEmpty(), downloadUri.toString(), uid, subject, courseNum, term, year, 0, 0, uuid, pushKey)
+                        // store user uploaded files in newly constructed user db
+                        val userPostReference = FirebaseDatabase.getInstance().reference.child("users").child(uid).child("user_posts").child(pushKey)
+                        userPostReference.setValue(true).addOnSuccessListener {
+                            Log.d("FirebaseService", "Post posted by user $uid with pushKey $pushKey")
+                        }.addOnFailureListener { exception ->
+                            Log.w("FirebaseService", "Error setting posted for user $uid with pushKey $pushKey", exception)
+                        }
                         fdbRef.child(pushKey).setValue(pdfFile)
                             .addOnSuccessListener {
                                 toastGenerated.value = true

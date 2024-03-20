@@ -27,6 +27,19 @@ class fileInfo {
             }
         })
     }
+    fun fetchColletsForPushKey(pushKey: String, callback: (Int?) -> Unit) {
+        val specificReference = databaseReference.child(pushKey)
+        specificReference.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val likes = dataSnapshot.child("collects").getValue(Int::class.java)
+                callback(likes)
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.w("FirebaseService", "fetchLikesForPushKey:onCancelled", databaseError.toException())
+                callback(null)
+            }
+        })
+    }
     // update likes based on if we want to increment it or decrement it
     fun updateLikesBasedOnPushkey(pushKey: String, userId: String, increment: Boolean) {
         val userLikeDatabaseReference = userDatabaseReference.child(userId).child("user_likes").child(pushKey)
@@ -96,10 +109,12 @@ class fileInfo {
         }
     }
     // retrieve all collects files, the intake will be the current user id
-    fun retrieveUserCollectedPdfFiles(userId: String, like_or_collect: String, callback: PdfFilesRetrievalCallback) {
+    fun retrieveUserCollectedPdfFiles(userId: String, like_or_collect_or_post: String, callback: PdfFilesRetrievalCallback) {
         var userCollectsReference = userDatabaseReference.child(userId).child("user_collects")
-        if (like_or_collect == "likes") {
+        if (like_or_collect_or_post == "likes") {
             userCollectsReference = userDatabaseReference.child(userId).child("user_likes")
+        } else if (like_or_collect_or_post == "posts") {
+            userCollectsReference = userDatabaseReference.child(userId).child("user_posts")
         }
         // check for each pushKey for the user
         userCollectsReference.addListenerForSingleValueEvent(object : ValueEventListener {
