@@ -16,13 +16,13 @@ class NoteScreenModel : ViewModel()  {
             }
         }
     }
-
-    fun incrementLikes(pushKey: String, userId: String) {
-        infoRetrieve.incrementLikesBasedOnKey(pushKey, userId)
+    // update Likes takes in a pushKey of the current file, the current user id, and a boolean to represent if you want to increase the like or decrease it
+    fun updateLikes(pushKey: String, userId: String, increment: Boolean) {
+        infoRetrieve.updateLikesBasedOnPushkey(pushKey, userId, increment)
     }
-
-    fun decrementLikes(pushKey: String, userId: String) {
-        infoRetrieve.decrementLikesBasedOnKey(pushKey, userId)
+    // update Collects takes in a pushKey of the current file, the current user id, and a boolean to represent if you want to save to collects or delete from it
+    fun updateCollects(pushKey: String, userId: String, increment: Boolean) {
+        infoRetrieve.updateCollectsBasedOnPushkey(pushKey, userId, increment)
     }
 
 }
