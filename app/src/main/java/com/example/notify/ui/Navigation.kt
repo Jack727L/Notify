@@ -59,24 +59,38 @@ fun Navigation(navHostController: NavHostController) {
                 }
             )
         }
-        composable(route = Route.ProfileScreen().name) {
-            ProfileScreen()
+        composable(route = Route.ProfileScreen().name+"/{id}/{currentUserId}/{currentDisplay}",
+            arguments = listOf(
+                navArgument("id") { type = NavType.StringType},
+                navArgument("currentUserId") { type = NavType.StringType},
+            )) { args ->
+            val id = args.arguments?.getString("id")
+            val currentUserId = args.arguments?.getString("currentUserId")
+            val currentDisplay = args.arguments?.getString("currentDisplay")
+            if (id != null && currentUserId != null && currentDisplay != null) {
+                ProfileScreen(id, currentUserId, currentDisplay, navHostController)
+            }
         }
         composable(route = Route.SettingsScreen().name) {
-            SettingsScreen(
-            )
+            SettingsScreen()
         }
         composable(
-            route = Route.NoteScreen().name+"/{id}/{downloadUrl}",
+            route = Route.NoteScreen().name+"/{id}/{downloadUrl}/{pushKey}/{userId}",
             arguments = listOf(
                 navArgument("id") { type = NavType.StringType},
                 navArgument("downloadUrl") { type = NavType.StringType},
+                navArgument("pushKey") { type = NavType.StringType},
+                navArgument("userId") { type = NavType.StringType},
             )
         )
         {args ->
             val id = args.arguments?.getString("id")
             val downloadUrl = args.arguments?.getString("downloadUrl")
-            NoteScreen(id, downloadUrl, navHostController)
+            val pushKey = args.arguments?.getString("pushKey")
+            val currentUserId = args.arguments?.getString("userId")
+            if (downloadUrl != null && id != null && pushKey != null && currentUserId != null) {
+                NoteScreen(id, downloadUrl, pushKey, currentUserId, navHostController)
+            }
         }
         composable(route = Route.UploadScreen().name) {
             UploadScreen(navHostController)

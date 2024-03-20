@@ -99,7 +99,7 @@ class fileInfo {
     fun retrieveUserCollectedPdfFiles(userId: String, like_or_collect: String, callback: PdfFilesRetrievalCallback) {
         var userCollectsReference = userDatabaseReference.child(userId).child("user_collects")
         if (like_or_collect == "likes") {
-            userCollectsReference = userDatabaseReference.child(userId).child("user_collects")
+            userCollectsReference = userDatabaseReference.child(userId).child("user_likes")
         }
         // check for each pushKey for the user
         userCollectsReference.addListenerForSingleValueEvent(object : ValueEventListener {

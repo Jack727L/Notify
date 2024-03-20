@@ -11,6 +11,7 @@ import com.example.notify.Services.fileRetrieve.fileInfo
 class ProfileScreenModel: ViewModel() {
     private val infoRetrieve = fileInfo()
     private val _pdfFiles = MutableLiveData<List<PdfFile>>()
+
     val pdfFiles: LiveData<List<PdfFile>> = _pdfFiles
 
     private val _message = MutableLiveData<String>()
@@ -23,9 +24,9 @@ class ProfileScreenModel: ViewModel() {
                     _message.postValue("Collected PDF files retrieved successfully!")
                     _pdfFiles.postValue(pdfFiles)
                     // Optional: Log each retrieved PDF file name
-                    // pdfFiles.forEach { pdfFile ->
-                    //     Log.d("YourViewModel", "Retrieved PDF File: ${pdfFile.fileName}")
-                    // }
+                     pdfFiles.forEach { pdfFile ->
+                         Log.d("YourViewModel", "Retrieved PDF File: ${pdfFile.fileName}")
+                     }
                 } else {
                     _message.postValue("No collected PDF files found.")
                     Log.d("YourViewModel", "No collected PDF files found.")
