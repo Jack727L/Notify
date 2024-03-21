@@ -32,21 +32,26 @@ import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
 @Composable
-fun NoteList(pdfFiles: List<PdfFile>, navController: NavHostController,) {
+fun NoteList(pdfFiles: List<PdfFile>, navController: NavHostController, currentUserId: String?) {
     LazyVerticalGrid(columns = GridCells.Fixed(2),
         contentPadding = PaddingValues(5.dp)) {
         itemsIndexed(pdfFiles) {index, pdfFile ->
-            NoteCard(
-                id = pdfFile.uid,
-                navController = navController,
-                contentDescription = "${pdfFile.year}${pdfFile.term} ${pdfFile.subject}${pdfFile.courseNum}",
-                title = pdfFile.fileName,
-                downloadUrl = pdfFile.downloadUrl,
-                likes = pdfFile.likes,
-                modifier= Modifier
-                    .padding(6.dp)
-                    .fillMaxWidth()
-            )
+            if (currentUserId != null) {
+                NoteCard(
+                    id = pdfFile.uid,
+                    navController = navController,
+                    contentDescription = "${pdfFile.year}${pdfFile.term} ${pdfFile.subject}${pdfFile.courseNum}",
+                    title = pdfFile.fileName,
+                    downloadUrl = pdfFile.downloadUrl,
+                    likes = pdfFile.likes,
+                    modifier= Modifier
+                        .padding(6.dp)
+                        .fillMaxWidth(),
+                    currentUserId = currentUserId,
+                    pushKey = pdfFile.pushKey
+                )
+            }
+
         }
     }
 }
@@ -58,11 +63,13 @@ fun NoteCard(
     contentDescription: String,
     title: String,
     downloadUrl: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    currentUserId: String,
+    pushKey: String
 ) {
     val encodedUrl = URLEncoder.encode(downloadUrl, StandardCharsets.UTF_8.toString())
     Card(
-        onClick = {navController.navigate(route = "Note/$id/$encodedUrl")},
+        onClick = {navController.navigate(route = "Note/$id/$encodedUrl/$pushKey/$currentUserId")},
         modifier = modifier,
         elevation= CardDefaults.cardElevation(defaultElevation = 5.dp)
     ) {

@@ -51,6 +51,9 @@ import com.example.notify.R
 import com.example.notify.Services.UploadService.PdfFile
 import com.example.notify.ui.homePage.HomePageViewModel
 import com.example.notify.ui.theme.Black
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 
 @Composable
 fun HomePage(navController: NavHostController) {
@@ -63,6 +66,9 @@ fun HomePage(navController: NavHostController) {
     pdfFiles.forEach { pdfFile ->
         Log.d("HomePageViewModel", "Retrieved PDF File: ${pdfFile.fileName}")
     }
+    lateinit var auth: FirebaseAuth
+    auth = Firebase.auth
+    val currentUserId = auth.currentUser?.uid
 
     Box {
         Image(
@@ -75,22 +81,31 @@ fun HomePage(navController: NavHostController) {
         )
         Scaffold(
             containerColor = Color.Transparent,
-            topBar = { TopSection(navController = navController) },
-            bottomBar = { Bottom (modifier = Modifier.fillMaxWidth(), navController=navController) }
+            topBar = {
+                if (currentUserId != null) {
+                    TopSection(navController = navController, currentUserId = currentUserId)
+                }
+            },
+            bottomBar = {
+                if (currentUserId != null) {
+                    Bottom (modifier = Modifier.fillMaxWidth(), currentUserId=currentUserId, navController=navController)
+                }
+            }
         ) { paddingValues ->
             Center(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(paddingValues),
                 navController = navController,
-                pdfFiles = pdfFiles
+                pdfFiles = pdfFiles,
+                currentUserId = currentUserId
             )
         }
     }
 }
 
 @Composable
-fun Bottom(modifier: Modifier = Modifier, navController: NavHostController) {
+fun Bottom(modifier: Modifier = Modifier, currentUserId: String, navController: NavHostController) {
     val uiColor = if (isSystemInDarkTheme()) Color.White else Black
     Box(modifier) {
         Row(
@@ -154,7 +169,7 @@ fun Bottom(modifier: Modifier = Modifier, navController: NavHostController) {
                 }
             }
             Card(
-                onClick = {navController.navigate(route = "profile")},
+                onClick = {navController.navigate(route = "profile/$currentUserId/$currentUserId/posts")},
                 colors = CardDefaults.cardColors(
                     containerColor = Color.Transparent,
                 ),
@@ -182,14 +197,15 @@ fun Bottom(modifier: Modifier = Modifier, navController: NavHostController) {
 }
 
 @Composable
-fun Center(modifier: Modifier=Modifier, navController: NavHostController, pdfFiles: List<PdfFile>) {
+fun Center(modifier: Modifier=Modifier, navController: NavHostController, pdfFiles: List<PdfFile>,
+           currentUserId: String?) {
     Box(modifier) {
-        NoteList(pdfFiles, navController)
+        NoteList(pdfFiles, navController, currentUserId)
     }
 }
 
 @Composable
-private fun TopSection(navController: NavHostController) {
+private fun TopSection(navController: NavHostController, currentUserId: String) {
     val uiColor = if (isSystemInDarkTheme()) Color.White else Black
     var expanded by remember { mutableStateOf(false) }
 
@@ -235,7 +251,7 @@ private fun TopSection(navController: NavHostController) {
                     text = { Text("Profile") },
                     onClick = {
                         expanded = false
-                        navController.navigate("profile")
+                        navController.navigate("profile/$currentUserId/$currentUserId/posts")
                     }
                 )
                 DropdownMenuItem(

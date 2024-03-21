@@ -47,9 +47,15 @@ class FileUploadImpl  @Inject constructor (
             val fdbRef = databaseReference.child("/pdfs")
             mStorageRef.putFile(uri, metadata).addOnSuccessListener {
                 mStorageRef.downloadUrl.addOnSuccessListener { downloadUri ->
-
-                    val pdfFile = PdfFile(fileName.orEmpty(), downloadUri.toString(), uid, subject, courseNum, term, year, 0, uuid)
                     fdbRef.push().key?.let { pushKey ->
+                        val pdfFile = PdfFile(fileName.orEmpty(), downloadUri.toString(), uid, subject, courseNum, term, year, 0, 0, uuid, pushKey)
+                        // store user uploaded files in newly constructed user db
+                        val userPostReference = FirebaseDatabase.getInstance().reference.child("users").child(uid).child("user_posts").child(pushKey)
+                        userPostReference.setValue(true).addOnSuccessListener {
+                            Log.d("FirebaseService", "Post posted by user $uid with pushKey $pushKey")
+                        }.addOnFailureListener { exception ->
+                            Log.w("FirebaseService", "Error setting posted for user $uid with pushKey $pushKey", exception)
+                        }
                         fdbRef.child(pushKey).setValue(pdfFile)
                             .addOnSuccessListener {
                                 toastGenerated.value = true
@@ -73,7 +79,7 @@ class FileUploadImpl  @Inject constructor (
         }
     }
     fun retrieveAllPdfFiles(callback: PdfFilesRetrievalCallback) {
-        val databaseReference = FirebaseDatabase.getInstance().reference.child("pdfs/MATH235")
+        val databaseReference = FirebaseDatabase.getInstance().reference.child("pdfs")
         databaseReference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val tempList = mutableListOf<PdfFile>()
