@@ -52,12 +52,14 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.documentfile.provider.DocumentFile
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.notify.R
 import kotlinx.coroutines.launch
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -177,8 +179,11 @@ fun UploadScreen( //refactor padding
                         fontWeight = FontWeight.Bold
                     )
                 }
-                Row() {
-                    Text(text=fileName.value.orEmpty())
+                Row(modifier = Modifier.padding(start = 20.dp),
+                    verticalAlignment = Alignment.CenterVertically) {
+                    Text(text=fileName.value.orEmpty(),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis)
                     Icon(
                         imageVector = Icons.Outlined.Edit,
                         modifier = Modifier
@@ -553,6 +558,8 @@ fun UploadScreen( //refactor padding
                 setCourseNum("")
                 setTerm("")
                 setYear("")
+
+                navController.navigate("Home")
             }
 
         }
