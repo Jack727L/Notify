@@ -102,7 +102,8 @@ fun PdfView(
         )
         Scaffold(
             containerColor = Color.Transparent,
-            topBar = { TopSection(navController = navController, id = id, currentUserId = userId) },
+            topBar = { TopSection(navController = navController, id = id, currentUserId = userId,
+                pushKey=pushKey, noteScreenModel=noteScreenModel) },
             bottomBar = { Bottom (modifier = Modifier.fillMaxWidth(), profileScreenModel, pushKey, id, userId, noteScreenModel) }
         ) { paddingValues ->
             Center(
@@ -197,9 +198,8 @@ private fun Bottom(modifier:Modifier = Modifier, profileScreenModel: ProfileScre
 
 @Composable
 private fun TopSection(navController: NavHostController, id: String,
-                       currentUserId: String) {
+                       currentUserId: String, pushKey: String, noteScreenModel: NoteScreenModel) {
     val uiColor = if (isSystemInDarkTheme()) Color.White else Black
-    var expanded by remember { mutableStateOf(false) }
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -242,7 +242,10 @@ private fun TopSection(navController: NavHostController, id: String,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.Red
                     ),
-                    onClick = {}
+                    onClick = {
+                        noteScreenModel.deleteFiles(pushKey, id)
+                        navController.navigate("home")
+                    }
                 ) {
                     Text("Delete")
                 }
