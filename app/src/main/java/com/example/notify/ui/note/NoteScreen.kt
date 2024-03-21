@@ -1,5 +1,4 @@
 package com.example.notify.ui.note
-
 import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
@@ -24,12 +23,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.Scaffold
@@ -54,7 +49,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -72,8 +66,8 @@ import java.net.URL
 fun NoteScreen(id: String, downloadUrl: String, pushKey: String, userId: String, navController: NavHostController) {
     // this save to collects
     val noteScreenModel: NoteScreenModel = viewModel()
-    var input: InputStream? by remember { mutableStateOf(null) }
     val profileScreenModel: ProfileScreenModel = viewModel()
+    var input: InputStream? by remember { mutableStateOf(null) }
 
     LaunchedEffect(Unit){
         withContext(Dispatchers.IO) {
@@ -83,7 +77,7 @@ fun NoteScreen(id: String, downloadUrl: String, pushKey: String, userId: String,
     }
     input?.let {
         PdfView(downloadUrl = it, pushKey = pushKey, id = id, navController=navController,
-        noteScreenModel=noteScreenModel, profileScreenModel=profileScreenModel, userId = userId)
+            noteScreenModel=noteScreenModel, profileScreenModel=profileScreenModel, userId = userId)
     }
 }
 
@@ -120,7 +114,6 @@ fun PdfView(
             )
         }
     }
-
 }
 
 @Composable
@@ -149,22 +142,8 @@ private fun Bottom(modifier:Modifier = Modifier, profileScreenModel: ProfileScre
     var favorite by remember { mutableIntStateOf(0) }
     var collect by remember { mutableIntStateOf(0) }
 
-//    profileScreenModel.retrieveUserPdfFiles(id, "collects")
-//    val collectedFiles by profileScreenModel.pdfFiles.observeAsState(initial = emptyList())
-//    run breaking@ {
-//        collectedFiles.forEach{pdfFile ->
-//            if (pdfFile.pushKey == pushKey) {
-//                isCollect = true
-//                return@breaking
-//            } else {
-//                isCollect = false
-//            }
-//        }
-//    }
-
     noteScreenModel.fetchLikes(pushKey)
     favorite = noteScreenModel.getLikes()
-
     noteScreenModel.fetchCollects(pushKey)
     collect = noteScreenModel.getCollects()
     val uiColor = if (isSystemInDarkTheme()) Color.White else Black
@@ -174,12 +153,12 @@ private fun Bottom(modifier:Modifier = Modifier, profileScreenModel: ProfileScre
             verticalAlignment = Alignment.CenterVertically) {
             FavoriteButton(
                 addFavorite={
-                            noteScreenModel.updateLikes(pushKey, currentUserId, true)
-                            noteScreenModel.fetchLikes(pushKey)
-                            Handler(Looper.getMainLooper()).postDelayed({
-                                favorite = noteScreenModel.getLikes()
-                                }, 100)
-                            },
+                    noteScreenModel.updateLikes(pushKey, currentUserId, true)
+                    noteScreenModel.fetchLikes(pushKey)
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        favorite = noteScreenModel.getLikes()
+                    }, 100)
+                },
                 subFavorite={
                     noteScreenModel.updateLikes(pushKey, currentUserId, false)
                     noteScreenModel.fetchLikes(pushKey)
@@ -188,27 +167,28 @@ private fun Bottom(modifier:Modifier = Modifier, profileScreenModel: ProfileScre
                     }, 100)
                 },
                 color=uiColor,
-                profileScreenModel = profileScreenModel,
                 id = currentUserId,
                 pushKey = pushKey
             )
             Text(favorite.toString(), color=uiColor, modifier=Modifier.padding(end=5.dp))
             CollectButton(
-                addCollects={
+                addCollect={
                     noteScreenModel.updateCollects(pushKey, currentUserId, true)
                     noteScreenModel.fetchCollects(pushKey)
                     Handler(Looper.getMainLooper()).postDelayed({
                         collect = noteScreenModel.getCollects()
                     }, 100)
                 },
-                subCollects={
+                subCollect={
                     noteScreenModel.updateCollects(pushKey, currentUserId, false)
                     noteScreenModel.fetchCollects(pushKey)
                     Handler(Looper.getMainLooper()).postDelayed({
                         collect = noteScreenModel.getCollects()
                     }, 100)
                 },
-                color=uiColor
+                color=uiColor,
+                id = currentUserId,
+                pushKey = pushKey
             )
             Text(collect.toString(), color=uiColor, modifier=Modifier.padding(end=20.dp))
         }
@@ -254,7 +234,7 @@ private fun TopSection(navController: NavHostController, id: String,
                 modifier = Modifier
                     .size(40.dp)
                     .background(color = Color.White, shape = CircleShape)
-                    .clickable { navController.navigate("profile/$id/$currentUserId") }
+                    .clickable { navController.navigate("profile/$id/$currentUserId/posts") }
             )
             if (id == currentUserId) {
                 Spacer(Modifier.weight(1f))
@@ -268,33 +248,6 @@ private fun TopSection(navController: NavHostController, id: String,
                 }
             }
         }
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-            offset = DpOffset(x = (-8).dp, y = 5.dp)
-        ) {
-            DropdownMenuItem(
-                text = { Text("Profile") },
-                onClick = {
-                    expanded = false
-                    navController.navigate("profile")
-                }
-            )
-            DropdownMenuItem(
-                text = { Text("Setting") },
-                onClick = {
-                    expanded = false
-                    navController.navigate("setting")
-                }
-            )
-            DropdownMenuItem(
-                text = { Text("Log Out") },
-                onClick = {
-                    expanded = false
-                    navController.navigate("Login")
-                }
-            )
-        }
     }
 }
 
@@ -304,13 +257,13 @@ fun FavoriteButton(
     color: Color = Color.White,
     addFavorite: ()->Unit,
     subFavorite: ()->Unit,
-    profileScreenModel: ProfileScreenModel,
     id: String,
     pushKey: String
 ) {
+    val profileScreenModel: ProfileScreenModel = viewModel()
     var isFavorite by remember { mutableStateOf(false) }
     profileScreenModel.retrieveUserPdfFiles(id, "likes")
-    val likedFiles by profileScreenModel.pdfFiles.observeAsState(initial = emptyList())
+    val likedFiles by profileScreenModel.likedFiles.observeAsState(initial = emptyList())
     run breaking@ {
         likedFiles.forEach{pdfFile ->
             if (pdfFile.pushKey == pushKey) {
@@ -349,47 +302,60 @@ fun FavoriteButton(
 fun CollectButton(
     modifier: Modifier = Modifier,
     color: Color = Color.White,
-    addCollects: ()->Unit,
-    subCollects: ()->Unit,
+    addCollect: ()->Unit,
+    subCollect: ()->Unit,
+    id: String,
+    pushKey: String
 ) {
+    val profileScreenModel: ProfileScreenModel = viewModel()
     var isCollect by remember { mutableStateOf(false) }
-
+    profileScreenModel.retrieveUserPdfFiles(id, "collects")
+    val collectedFiles by profileScreenModel.collectedFiles.observeAsState(initial = emptyList())
+    run breaking@ {
+        collectedFiles.forEach{pdfFile ->
+            if (pdfFile.pushKey == pushKey) {
+                isCollect = true
+                return@breaking
+            } else {
+                isCollect = false
+            }
+        }
+    }
     IconToggleButton(
         checked = isCollect,
         onCheckedChange = {
             if (isCollect) {
-                addCollects()
+                subCollect()
             } else {
-                subCollects()
+                addCollect()
             }
             isCollect = !isCollect
-        },
+        }
     ) {
         Icon(
             tint = color,
             imageVector = if (isCollect) {
-                Icons.Filled.Star
+                filledFlag()
             } else {
-                Icons.Outlined.Star
+                rememberFlag()
             },
-            contentDescription = null,
-            modifier = Modifier.size(24.dp)
+            modifier = Modifier.size(24.dp),
+            contentDescription = null
         )
     }
-
 }
 @Composable
-fun starBorder(color: Color): ImageVector {
+fun filledFlag(): ImageVector {
     return remember {
         ImageVector.Builder(
-            name = "star",
+            name = "flag",
             defaultWidth = 40.0.dp,
             defaultHeight = 40.0.dp,
             viewportWidth = 40.0f,
             viewportHeight = 40.0f
         ).apply {
             path(
-                fill = SolidColor(color),
+                fill = SolidColor(Color.Black),
                 fillAlpha = 1f,
                 stroke = null,
                 strokeAlpha = 1f,
@@ -399,34 +365,96 @@ fun starBorder(color: Color): ImageVector {
                 strokeLineMiter = 1f,
                 pathFillType = PathFillType.NonZero
             ) {
-                moveTo(13.667f, 33.958f)
-                quadToRelative(-1.042f, 0.75f, -2.084f, 0.021f)
-                quadToRelative(-1.041f, -0.729f, -0.625f, -1.979f)
-                lineToRelative(2.417f, -7.875f)
-                lineToRelative(-6.208f, -4.458f)
-                quadToRelative(-1.084f, -0.75f, -0.709f, -1.979f)
-                quadToRelative(0.375f, -1.23f, 1.667f, -1.23f)
-                horizontalLineToRelative(7.708f)
-                lineToRelative(2.5f, -8.25f)
-                quadToRelative(0.167f, -0.625f, 0.646f, -0.937f)
-                quadToRelative(0.479f, -0.313f, 1.021f, -0.313f)
-                quadToRelative(0.542f, 0f, 1.021f, 0.313f)
-                quadToRelative(0.479f, 0.312f, 0.687f, 0.937f)
-                lineToRelative(2.459f, 8.25f)
-                horizontalLineToRelative(7.708f)
-                quadToRelative(1.292f, 0f, 1.667f, 1.23f)
-                quadToRelative(0.375f, 1.229f, -0.709f, 1.979f)
-                lineToRelative(-6.208f, 4.458f)
-                lineTo(29.083f, 32f)
-                quadToRelative(0.375f, 1.25f, -0.666f, 1.979f)
-                quadToRelative(-1.042f, 0.729f, -2.084f, -0.062f)
-                lineToRelative(-6.291f, -4.792f)
+                moveTo(9.667f, 35.458f)
+                quadToRelative(-0.75f, 0f, -1.25f, -0.52f)
+                quadToRelative(-0.5f, -0.521f, -0.5f, -1.23f)
+                verticalLineTo(8f)
+                quadToRelative(0f, -0.75f, 0.5f, -1.25f)
+                reflectiveQuadToRelative(1.25f, -0.5f)
+                horizontalLineToRelative(12.208f)
+                quadToRelative(0.625f, 0f, 1.104f, 0.396f)
+                quadToRelative(0.479f, 0.396f, 0.604f, 1.021f)
+                lineToRelative(0.459f, 2.041f)
+                horizontalLineTo(32f)
+                quadToRelative(0.75f, 0f, 1.271f, 0.521f)
+                quadToRelative(0.521f, 0.521f, 0.521f, 1.271f)
+                verticalLineToRelative(13.25f)
+                quadToRelative(0f, 0.75f, -0.521f, 1.25f)
+                reflectiveQuadTo(32f, 26.5f)
+                horizontalLineToRelative(-8.708f)
+                quadToRelative(-0.625f, 0f, -1.104f, -0.396f)
+                quadToRelative(-0.48f, -0.396f, -0.605f, -1.021f)
+                lineToRelative(-0.458f, -2.041f)
+                horizontalLineToRelative(-9.708f)
+                verticalLineToRelative(10.666f)
+                quadToRelative(0f, 0.709f, -0.521f, 1.23f)
+                quadToRelative(-0.521f, 0.52f, -1.229f, 0.52f)
                 close()
             }
         }.build()
     }
 }
-
+@Composable
+fun rememberFlag(): ImageVector {
+    return remember {
+        ImageVector.Builder(
+            name = "flag",
+            defaultWidth = 40.0.dp,
+            defaultHeight = 40.0.dp,
+            viewportWidth = 40.0f,
+            viewportHeight = 40.0f
+        ).apply {
+            path(
+                fill = SolidColor(Color.Black),
+                fillAlpha = 1f,
+                stroke = null,
+                strokeAlpha = 1f,
+                strokeLineWidth = 1.0f,
+                strokeLineCap = StrokeCap.Butt,
+                strokeLineJoin = StrokeJoin.Miter,
+                strokeLineMiter = 1f,
+                pathFillType = PathFillType.NonZero
+            ) {
+                moveTo(9.667f, 35.458f)
+                quadToRelative(-0.75f, 0f, -1.25f, -0.52f)
+                quadToRelative(-0.5f, -0.521f, -0.5f, -1.23f)
+                verticalLineTo(8f)
+                quadToRelative(0f, -0.75f, 0.5f, -1.25f)
+                reflectiveQuadToRelative(1.25f, -0.5f)
+                horizontalLineToRelative(12.208f)
+                quadToRelative(0.625f, 0f, 1.104f, 0.396f)
+                quadToRelative(0.479f, 0.396f, 0.604f, 1.021f)
+                lineToRelative(0.459f, 2.041f)
+                horizontalLineTo(32f)
+                quadToRelative(0.75f, 0f, 1.271f, 0.521f)
+                quadToRelative(0.521f, 0.521f, 0.521f, 1.271f)
+                verticalLineToRelative(13.25f)
+                quadToRelative(0f, 0.75f, -0.521f, 1.25f)
+                reflectiveQuadTo(32f, 26.5f)
+                horizontalLineToRelative(-8.708f)
+                quadToRelative(-0.625f, 0f, -1.104f, -0.375f)
+                quadToRelative(-0.48f, -0.375f, -0.605f, -1.042f)
+                lineToRelative(-0.458f, -2.041f)
+                horizontalLineToRelative(-9.708f)
+                verticalLineToRelative(10.666f)
+                quadToRelative(0f, 0.709f, -0.521f, 1.23f)
+                quadToRelative(-0.521f, 0.52f, -1.229f, 0.52f)
+                close()
+                moveToRelative(11.166f, -19.083f)
+                close()
+                moveToRelative(4f, 6.583f)
+                horizontalLineToRelative(5.417f)
+                verticalLineTo(13.25f)
+                horizontalLineToRelative(-9.167f)
+                lineToRelative(-0.75f, -3.458f)
+                horizontalLineToRelative(-8.916f)
+                verticalLineTo(19.5f)
+                horizontalLineToRelative(12.666f)
+                close()
+            }
+        }.build()
+    }
+}
 @Composable
 fun starFilled(color: Color): ImageVector {
     return remember {
