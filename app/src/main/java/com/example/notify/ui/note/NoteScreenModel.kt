@@ -59,5 +59,9 @@ class NoteScreenModel : ViewModel()  {
     fun updateCollects(pushKey: String, userId: String, increment: Boolean) {
         infoRetrieve.updateCollectsBasedOnPushkey(pushKey, userId, increment)
     }
+    // delete files based on push Key
+    fun deleteFiles(pushKey: String, uid: String) {
+        infoRetrieve.deletePdfFile(pushKey, uid)
+    }
 
 }
