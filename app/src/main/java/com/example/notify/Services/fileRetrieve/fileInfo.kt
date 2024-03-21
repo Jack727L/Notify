@@ -140,36 +140,41 @@ class fileInfo {
     }
     // retrieve all collects files, the intake will be the current user id
     fun retrieveUserCollectedPdfFiles(userId: String, like_or_collect_or_post: String, callback: PdfFilesRetrievalCallback) {
-        var userCollectsReference = userDatabaseReference.child(userId).child("user_collects")
-        if (like_or_collect_or_post == "likes") {
-            userCollectsReference = userDatabaseReference.child(userId).child("user_likes")
-        } else if (like_or_collect_or_post == "posts") {
-            userCollectsReference = userDatabaseReference.child(userId).child("user_posts")
+        var userCollectsReference = userDatabaseReference.child(userId)
+        when (like_or_collect_or_post) {
+            "likes" -> userCollectsReference = userCollectsReference.child("user_likes")
+            "posts" -> userCollectsReference = userCollectsReference.child("user_posts")
+            else -> userCollectsReference = userCollectsReference.child("user_collects")
         }
-        // check for each pushKey for the user
         userCollectsReference.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(userSnapshot: DataSnapshot) {
                 val pushKeys = userSnapshot.children.mapNotNull { it.key }
                 if (pushKeys.isEmpty()) {
-                    Log.e("retrieving", "User has no collects")
-                    callback.onError("User has no collects")
+                    Log.e("retrieving", "User has no $like_or_collect_or_post")
+                    callback.onError("User has no $like_or_collect_or_post")
                     return
                 }
+
                 val tempList = mutableListOf<PdfFile>()
                 val databaseReference = FirebaseDatabase.getInstance().reference.child("pdfs")
                 var completedRequests = 0
-                // match that push key with the file under pdfs path
+
                 pushKeys.forEach { pushKey ->
                     databaseReference.child(pushKey).addListenerForSingleValueEvent(object : ValueEventListener {
                         override fun onDataChange(pdfSnapshot: DataSnapshot) {
-                            val pdfFile = pdfSnapshot.getValue(PdfFile::class.java)
-                            pdfFile?.let {
-                                tempList.add(it)
+                            if (pdfSnapshot.exists()) {
+                                pdfSnapshot.getValue(PdfFile::class.java)?.let {
+                                    tempList.add(it)
+                                }
+                            } else {
+                                // If the pushKey does not correspond to an existing PDF, remove it from the user's collection
+                                userCollectsReference.child(pushKey).removeValue().addOnSuccessListener {
+                                    Log.d("Cleanup", "Removed orphaned reference for pushKey $pushKey from user's $like_or_collect_or_post")
+                                }
                             }
                             completedRequests++
                             if (completedRequests == pushKeys.size) {
                                 if (tempList.isEmpty()) {
-                                    Log.e("retrieving", "No matching PDF files found")
                                     callback.onError("No matching PDF files found")
                                 } else {
                                     callback.onSuccess(tempList)
@@ -178,7 +183,6 @@ class fileInfo {
                         }
                         override fun onCancelled(pdfError: DatabaseError) {
                             completedRequests++
-                            Log.e("retrieving", "Error retrieving PDF file for pushKey $pushKey", pdfError.toException())
                             if (completedRequests == pushKeys.size && tempList.isEmpty()) {
                                 callback.onError("Error retrieving PDF files")
                             }
@@ -187,9 +191,26 @@ class fileInfo {
                 }
             }
             override fun onCancelled(userError: DatabaseError) {
-                Log.e("retrieving", "Error retrieving user collects", userError.toException())
-                callback.onError(userError.toException().message ?: "Error retrieving user collects")
+                callback.onError(userError.toException().message ?: "Error retrieving user $like_or_collect_or_post")
             }
         })
+    }
+    // delete files, argument takes in a push key
+    fun deletePdfFile(pushKey: String, uid: String) {
+        // Reference to the PDF file in the Realtime Database
+        val pdfFileRef = FirebaseDatabase.getInstance().reference.child("pdfs").child(pushKey)
+        // Delete the PDF file entry
+        pdfFileRef.removeValue().addOnSuccessListener {
+            Log.d("DeleteService", "Successfully deleted PDF file with pushKey $pushKey from Realtime Database")
+            // If the file was also referenced under the user's data, delete that reference
+            val userPostRef = FirebaseDatabase.getInstance().reference.child("users").child(uid).child("user_posts").child(pushKey)
+            userPostRef.removeValue().addOnSuccessListener {
+                Log.d("DeleteService", "Successfully deleted reference to PDF file with pushKey $pushKey from user's posts")
+            }.addOnFailureListener { exception ->
+                Log.e("DeleteService", "Error deleting reference to PDF file with pushKey $pushKey from user's posts", exception)
+            }
+        }.addOnFailureListener { exception ->
+            Log.e("DeleteService", "Error deleting PDF file with pushKey $pushKey from Realtime Database", exception)
+        }
     }
 }
