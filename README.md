@@ -20,7 +20,7 @@ Checkout our release note [here](https://git.uwaterloo.ca/p259li/team-102-19/-/r
 
 ## Getting Started
 
-To get started with Notify, [download installer](/Notify 2.0.0.apk)
+To get started with Notify, [download installer](/Notify 3.0.0.apk)
 
 Supporting device : Pixel 6 Pro
 
