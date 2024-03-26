@@ -267,16 +267,19 @@ fun FavoriteButton(
     var isFavorite by remember { mutableStateOf(false) }
     profileScreenModel.retrieveUserPdfFiles(id, "likes")
     val likedFiles by profileScreenModel.likedFiles.observeAsState(initial = emptyList())
-    run breaking@ {
-        likedFiles.forEach{pdfFile ->
-            if (pdfFile.pushKey == pushKey) {
-                isFavorite = true
-                return@breaking
-            } else {
-                isFavorite = false
+    Handler(Looper.getMainLooper()).postDelayed({
+        run breaking@ {
+            likedFiles.forEach{pdfFile ->
+                if (pdfFile.pushKey == pushKey) {
+                    isFavorite = true
+                    return@breaking
+                } else {
+                    isFavorite = false
+                }
             }
         }
-    }
+    }, 100)
+
     IconToggleButton(
         checked = isFavorite,
         onCheckedChange = {
@@ -314,16 +317,18 @@ fun CollectButton(
     var isCollect by remember { mutableStateOf(false) }
     profileScreenModel.retrieveUserPdfFiles(id, "collects")
     val collectedFiles by profileScreenModel.collectedFiles.observeAsState(initial = emptyList())
-    run breaking@ {
-        collectedFiles.forEach{pdfFile ->
-            if (pdfFile.pushKey == pushKey) {
-                isCollect = true
-                return@breaking
-            } else {
-                isCollect = false
+    Handler(Looper.getMainLooper()).postDelayed({
+        run breaking@ {
+            collectedFiles.forEach{pdfFile ->
+                if (pdfFile.pushKey == pushKey) {
+                    isCollect = true
+                    return@breaking
+                } else {
+                    isCollect = false
+                }
             }
         }
-    }
+    }, 100)
     IconToggleButton(
         checked = isCollect,
         onCheckedChange = {
