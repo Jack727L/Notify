@@ -75,12 +75,13 @@ fun Navigation(navHostController: NavHostController) {
             SettingsScreen()
         }
         composable(
-            route = Route.NoteScreen().name+"/{id}/{downloadUrl}/{pushKey}/{userId}",
+            route = Route.NoteScreen().name+"/{id}/{downloadUrl}/{pushKey}/{userId}/{fileName}",
             arguments = listOf(
                 navArgument("id") { type = NavType.StringType},
                 navArgument("downloadUrl") { type = NavType.StringType},
                 navArgument("pushKey") { type = NavType.StringType},
                 navArgument("userId") { type = NavType.StringType},
+                navArgument("fileName") { type = NavType.StringType},
             )
         )
         {args ->
@@ -88,8 +89,9 @@ fun Navigation(navHostController: NavHostController) {
             val downloadUrl = args.arguments?.getString("downloadUrl")
             val pushKey = args.arguments?.getString("pushKey")
             val currentUserId = args.arguments?.getString("userId")
-            if (downloadUrl != null && id != null && pushKey != null && currentUserId != null) {
-                NoteScreen(id, downloadUrl, pushKey, currentUserId, navHostController)
+            val fileName = args.arguments?.getString("fileName")
+            if (downloadUrl != null && id != null && pushKey != null && currentUserId != null && fileName != null) {
+                NoteScreen(id, downloadUrl, pushKey, currentUserId, fileName, navHostController)
             }
         }
         composable(route = Route.UploadScreen().name) {

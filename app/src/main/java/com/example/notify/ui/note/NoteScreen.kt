@@ -4,10 +4,12 @@ import android.os.Looper
 import android.view.LayoutInflater
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -39,6 +41,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathFillType
 import androidx.compose.ui.graphics.RectangleShape
@@ -63,7 +66,7 @@ import java.io.InputStream
 import java.net.URL
 
 @Composable
-fun NoteScreen(id: String, downloadUrl: String, pushKey: String, userId: String, navController: NavHostController) {
+fun NoteScreen(id: String, downloadUrl: String, pushKey: String, userId: String, fileName: String, navController: NavHostController) {
     // this save to collects
     val noteScreenModel: NoteScreenModel = viewModel()
     val profileScreenModel: ProfileScreenModel = viewModel()
@@ -77,7 +80,7 @@ fun NoteScreen(id: String, downloadUrl: String, pushKey: String, userId: String,
     }
     input?.let {
         PdfView(downloadUrl = it, pushKey = pushKey, id = id, navController=navController,
-            noteScreenModel=noteScreenModel, profileScreenModel=profileScreenModel, userId = userId)
+            noteScreenModel=noteScreenModel, profileScreenModel=profileScreenModel, userId = userId, fileName = fileName)
     }
 }
 
@@ -89,7 +92,8 @@ fun PdfView(
     navController: NavHostController,
     noteScreenModel: NoteScreenModel,
     profileScreenModel: ProfileScreenModel,
-    userId: String
+    userId: String,
+    fileName: String
 ) {
     Box {
         Image(
@@ -104,7 +108,7 @@ fun PdfView(
             containerColor = Color.Transparent,
             topBar = { TopSection(navController = navController, id = id, currentUserId = userId,
                 pushKey=pushKey, noteScreenModel=noteScreenModel) },
-            bottomBar = { Bottom (modifier = Modifier.fillMaxWidth(), profileScreenModel, pushKey, id, userId, noteScreenModel) }
+            bottomBar = { Bottom (modifier = Modifier.fillMaxWidth(), profileScreenModel, pushKey, id, userId, noteScreenModel, fileName) }
         ) { paddingValues ->
             Center(
                 modifier = Modifier
@@ -139,7 +143,10 @@ private fun Center(modifier: Modifier=Modifier, downloadUrl: InputStream?) {
 
 
 @Composable
-private fun Bottom(modifier:Modifier = Modifier, profileScreenModel: ProfileScreenModel, pushKey: String, id: String, currentUserId: String, noteScreenModel:NoteScreenModel) {
+private fun Bottom(modifier:Modifier = Modifier,
+                   profileScreenModel: ProfileScreenModel, pushKey: String, id: String,
+                   currentUserId: String, noteScreenModel:NoteScreenModel,
+                   fileName: String) {
     var favorite by remember { mutableIntStateOf(0) }
     var collect by remember { mutableIntStateOf(0) }
 
@@ -149,8 +156,13 @@ private fun Bottom(modifier:Modifier = Modifier, profileScreenModel: ProfileScre
     collect = noteScreenModel.getCollects()
     val uiColor = if (isSystemInDarkTheme()) Color.White else Black
 
-    Box(modifier=modifier) {
-        Row(modifier=Modifier.align(Alignment.CenterEnd),
+    Column(modifier=modifier) {
+        Row(modifier=Modifier
+            .align(Alignment.Start)
+            .padding(start=10.dp),) {
+            Text(fileName, maxLines=2)
+        }
+        Row(modifier=Modifier.align(Alignment.End),
             verticalAlignment = Alignment.CenterVertically) {
             FavoriteButton(
                 addFavorite={
@@ -171,7 +183,7 @@ private fun Bottom(modifier:Modifier = Modifier, profileScreenModel: ProfileScre
                 id = currentUserId,
                 pushKey = pushKey
             )
-            Text(favorite.toString(), color=uiColor, modifier=Modifier.padding(end=5.dp))
+            Text(favorite.toString(), color=uiColor, modifier=Modifier.padding(end=2.dp))
             CollectButton(
                 addCollect={
                     noteScreenModel.updateCollects(pushKey, currentUserId, true)
@@ -230,10 +242,14 @@ private fun TopSection(navController: NavHostController, id: String,
                     tint=uiColor
                 )
             }
-            Box(
+            Image(
+                painter = painterResource(id = R.drawable.baseline_face_2_24),
+                contentDescription = "Big Elephant",
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(40.dp)
-                    .background(color = Color.White, shape = CircleShape)
+                    .clip(CircleShape)
+                    .border(3.dp, Color.Black, CircleShape)
                     .clickable { navController.navigate("profile/$id/$currentUserId/posts") }
             )
             if (id == currentUserId) {
@@ -291,15 +307,20 @@ fun FavoriteButton(
             isFavorite = !isFavorite
         }
     ) {
-        Icon(
-            tint = color,
-            imageVector = if (isFavorite) {
-                Icons.Filled.Favorite
-            } else {
-                Icons.Default.FavoriteBorder
-            },
-            contentDescription = null
-        )
+        if (isFavorite) {
+            Icon(
+                tint = Color.Red,
+                imageVector = Icons.Filled.Favorite,
+                contentDescription = null
+            )
+        } else {
+            Icon(
+                tint = color,
+                imageVector = Icons.Default.FavoriteBorder,
+                contentDescription = null
+            )
+        }
+
     }
 
 }

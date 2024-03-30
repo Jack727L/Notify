@@ -1,5 +1,7 @@
 package com.example.notify.ui.profile
 
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -8,16 +10,22 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,6 +41,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -71,19 +80,28 @@ fun ProfileScreen(id: String, currentUserId: String, currentDisplay: String, nav
     val pdfFiles by profileScreenModel.pdfFiles.observeAsState(initial = emptyList())
     val likedFiles by profileScreenModel.likedFiles.observeAsState(initial = emptyList())
     val collectedFiles by profileScreenModel.collectedFiles.observeAsState(initial = emptyList())
+    likedFiles.forEach{file ->
+        Log.d("Profile", file.fileName)
+    }
 
     var commonFiles: List<PdfFile> by remember { mutableStateOf(emptyList()) }
-    when (currentDisplay) {
-        "likes" -> {
-            commonFiles = likedFiles
+
+    Handler(Looper.getMainLooper()).postDelayed({
+        run breaking@ {
+            commonFiles = when (currentDisplay) {
+                "likes" -> {
+                    likedFiles
+                }
+                "collects" -> {
+                    collectedFiles
+                }
+                else -> {
+                    pdfFiles
+                }
+            }
+            return@breaking
         }
-        "collects" -> {
-            commonFiles = collectedFiles
-        }
-        else -> {
-            commonFiles = pdfFiles
-        }
-    }
+    }, 100)
     Box {
         Scaffold(
             containerColor = Color.Transparent,
@@ -95,7 +113,8 @@ fun ProfileScreen(id: String, currentUserId: String, currentDisplay: String, nav
                         .background(Color(0xFFBBDEFB)),
                     userName = "John Doe",
                     userId = id,
-                    currentUserId = currentUserId
+                    currentUserId = currentUserId,
+                    navController = navController
                 )
             },
             bottomBar = {
@@ -120,6 +139,7 @@ fun ProfileScreen(id: String, currentUserId: String, currentDisplay: String, nav
 @Composable
 fun Center(modifier: Modifier=Modifier, navController: NavHostController, pdfFiles: List<PdfFile>,
            currentUserId: String, currentDisplay: String, userId: String) {
+    val sortedPdfFiles: List<PdfFile> = pdfFiles.sortedByDescending { it.likes * 0.7 + it.collects * 0.3 }
 
     val uiColor = if (isSystemInDarkTheme()) Color.White else Black
     val textModifier = Modifier.drawBehind {
@@ -170,11 +190,11 @@ fun Center(modifier: Modifier=Modifier, navController: NavHostController, pdfFil
                     fontSize=16.sp, color = uiColor, text="Collects")
             }
         }
-        pdfFiles.forEach { pdfFile ->
+        sortedPdfFiles.forEach { pdfFile ->
             Log.d("ProfileTest", pdfFile.fileName)
         }
         Box() {
-            NoteList(pdfFiles, navController, currentUserId)
+            NoteList(sortedPdfFiles, navController, currentUserId)
         }
 
 
@@ -183,16 +203,36 @@ fun Center(modifier: Modifier=Modifier, navController: NavHostController, pdfFil
 
 
 @Composable
-fun Top(modifier: Modifier = Modifier, userName:String, userId:String, currentUserId: String) {
+fun Top(modifier: Modifier = Modifier, userName:String, userId:String, currentUserId: String, navController: NavHostController) {
     val uiColor = if (isSystemInDarkTheme()) Color.White else Black
     Column(modifier = modifier,
         verticalArrangement = Arrangement.Center)
     {
+        if (currentUserId != userId) {
+            Row(horizontalArrangement = Arrangement.Start,
+                modifier=Modifier.height(40.dp)) {
+                Button(
+                    onClick = { navController.popBackStack() },
+                    modifier = Modifier
+                        .height(40.dp)
+                        .width(40.dp)
+                        .padding(start = 10.dp, top=10.dp),
+                    contentPadding = PaddingValues(1.dp),
+                    shape = RectangleShape,
+                    colors = ButtonDefaults.buttonColors(Color.Transparent)
+                ) {
+                    Icon(
+                        Icons.AutoMirrored.Rounded.ArrowBack,
+                        contentDescription = null,
+                        tint = uiColor,
+                    )
+                }
+            }
+        }
         Row(
-            modifier = Modifier.padding(start = 20.dp),
+            modifier = Modifier.padding(start = 20.dp).fillMaxHeight(),
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically
-
         ){
             Image(
                 painter = painterResource(id = R.drawable.baseline_face_2_24),
@@ -201,7 +241,7 @@ fun Top(modifier: Modifier = Modifier, userName:String, userId:String, currentUs
                 modifier = Modifier
                     .size(100.dp)
                     .clip(CircleShape)
-                    .border(5.dp, Color.LightGray, CircleShape)
+                    .border(10.dp, Color.Black, CircleShape)
             )
             Text(fontSize=24.sp, color=uiColor, text=userName,
                 modifier=Modifier.padding(start=10.dp))
