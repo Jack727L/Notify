@@ -1,7 +1,14 @@
 package com.example.notify.ui.search
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.notify.Services.UploadService.FileUploadImpl
+import com.example.notify.Services.UploadService.PdfFile
+import com.example.notify.Services.UploadService.PdfFilesRetrievalCallback
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,7 +20,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 
-class SearchModel(): ViewModel() {
+class SearchModel(private val fileUploadService: FileUploadImpl) : ViewModel() {
     private val _searchText = MutableStateFlow("")
     val searchText = _searchText.asStateFlow()
 
@@ -44,7 +51,44 @@ class SearchModel(): ViewModel() {
     fun onSearchTextChange(text: String) {
         _searchText.value = text
     }
+    private val _pdfFiles = MutableStateFlow<List<PdfFile>>(emptyList())
+    init {
+        val storageReference = FirebaseStorage.getInstance().reference
+        val databaseReference = FirebaseDatabase.getInstance().getReference("pdfs/MATH235")
+        val fileUploadService = FileUploadImpl(storageReference, databaseReference)
 
+        fileUploadService.retrieveAllPdfFiles(object : PdfFilesRetrievalCallback {
+            override fun onSuccess(pdfFiles: List<PdfFile>) {
+                _pdfFiles.value = pdfFiles // Update the state flow directly
+                pdfFiles.forEach { pdfFile ->
+                    Log.d("SearchModel", "Retrieved PDF File: ${pdfFile.fileName}")
+                }
+            }
+
+            override fun onError(errorMessage: String) {
+                Log.e("SearchModel", "Error retrieving PDF files: $errorMessage")
+            }
+        })
+    }
+    val filteredPdfFiles = searchText
+        .debounce(500L)
+        .onEach { _isSearching.value = true }
+        .combine(_pdfFiles) { text, files ->
+            if (text.isBlank()) files
+            else files.filter { it.fileName.contains(text, ignoreCase = true) }
+        }
+        .onEach { _isSearching.value = false }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+}
+
+class SearchModelFactory(private val fileUploadService: FileUploadImpl) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(SearchModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return SearchModel(fileUploadService) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
+    }
 }
 
 

@@ -1,5 +1,6 @@
 package com.example.notify.ui.search
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -25,20 +26,36 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.notify.Services.UploadService.FileUploadImpl
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.storage.FirebaseStorage
 
 
 @Composable
 fun SearchScreen(onBackClick: () -> Unit) {
-    val viewModel = viewModel<SearchModel>()
+    val fileUploadService = remember {
+        val storageReference = FirebaseStorage.getInstance().reference
+        val databaseReference = FirebaseDatabase.getInstance().getReference("pdfs/MATH235")
+        FileUploadImpl(storageReference, databaseReference)
+    }
+
+    // Create and remember the ViewModelFactory
+    val searchModelFactory = remember { SearchModelFactory(fileUploadService) }
+
+    // Retrieve the ViewModel using the factory
+    val viewModel: SearchModel = viewModel(factory = searchModelFactory)
+
     val searchText by viewModel.searchText.collectAsState()
     val notes by viewModel.notes.collectAsState()
     val isSearching by viewModel.isSearching.collectAsState()
-
+    val filteredPdfFiles by viewModel.filteredPdfFiles.collectAsState()
+    Log.d("SearchScreen", "Filtered PDF Files: ${filteredPdfFiles.size}")
     Surface() {
         Column(modifier = Modifier.fillMaxSize()) {
             Row(
@@ -69,6 +86,7 @@ fun SearchScreen(onBackClick: () -> Unit) {
             }
 
             Spacer(modifier = Modifier.height(16.dp))
+
             if (isSearching) {
                 Box(modifier=Modifier.fillMaxSize()) {
                     CircularProgressIndicator(
@@ -76,14 +94,11 @@ fun SearchScreen(onBackClick: () -> Unit) {
                     )
                 }
             } else {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                ) {
-                    items(notes) { note ->
+                LazyColumn {
+                    items(filteredPdfFiles) { pdfFile ->
+                        // Display each PDF file, adjust as necessary for your data structure
                         Text(
-                            text = "${note.term} ${note.courseCode}",
+                            text = pdfFile.fileName,  // Use the correct property for display
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(vertical = 16.dp)
@@ -91,7 +106,6 @@ fun SearchScreen(onBackClick: () -> Unit) {
                     }
                 }
             }
-
         }
     }
 }
