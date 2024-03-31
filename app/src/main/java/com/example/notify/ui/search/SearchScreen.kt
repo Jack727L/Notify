@@ -52,7 +52,7 @@ fun SearchScreen(onBackClick: () -> Unit) {
     val viewModel: SearchModel = viewModel(factory = searchModelFactory)
 
     val searchText by viewModel.searchText.collectAsState()
-    val notes by viewModel.notes.collectAsState()
+//    val notes by viewModel.notes.collectAsState()
     val isSearching by viewModel.isSearching.collectAsState()
     val filteredPdfFiles by viewModel.filteredPdfFiles.collectAsState()
     Log.d("SearchScreen", "Filtered PDF Files: ${filteredPdfFiles.size}")
