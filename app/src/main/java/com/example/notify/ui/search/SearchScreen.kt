@@ -13,8 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material3.Button
@@ -32,13 +30,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import com.example.notify.Services.UploadService.FileUploadImpl
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 
 
 @Composable
-fun SearchScreen(onBackClick: () -> Unit) {
+fun SearchScreen(onBackClick: () -> Unit, navController: NavHostController, currentUserId: String?) {
     val fileUploadService = remember {
         val storageReference = FirebaseStorage.getInstance().reference
         val databaseReference = FirebaseDatabase.getInstance().getReference("pdfs/MATH235")
@@ -93,18 +92,12 @@ fun SearchScreen(onBackClick: () -> Unit) {
                         modifier=Modifier.align(Alignment.Center)
                     )
                 }
+            } else if (filteredPdfFiles.isNotEmpty()) {
+                // Use NoteList to display filtered PDF files
+                NoteList(pdfFiles = filteredPdfFiles, navController = navController, currentUserId = currentUserId)
             } else {
-                LazyColumn {
-                    items(filteredPdfFiles) { pdfFile ->
-                        // Display each PDF file, adjust as necessary for your data structure
-                        Text(
-                            text = pdfFile.fileName,  // Use the correct property for display
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 16.dp)
-                        )
-                    }
-                }
+                // Display some message when no files are found
+                Text("No files found", modifier = Modifier.padding(16.dp))
             }
         }
     }

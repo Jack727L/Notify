@@ -80,7 +80,15 @@ class SearchModel(private val fileUploadService: FileUploadImpl) : ViewModel() {
                 files
             } else {
                 delay(1000)  // Simulate a search delay if necessary
-                files.filter { it.fileName.contains(text, ignoreCase = true) }
+                files.filter { pdfFile ->
+                    // Include additional attributes in the search criteria
+                    pdfFile.fileName.contains(text, ignoreCase = true) ||
+                            pdfFile.year.contains(text, ignoreCase = true) ||
+                            pdfFile.term.contains(text, ignoreCase = true) ||
+                            pdfFile.subject.contains(text, ignoreCase = true) ||
+                            pdfFile.courseNum.contains(text, ignoreCase = true)
+                }
+
             }
         }
         .onEach {
