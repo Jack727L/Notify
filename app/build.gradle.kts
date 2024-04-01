@@ -85,7 +85,6 @@ dependencies {
     implementation("com.joanzapata.pdfview:android-pdfview:1.0.4@aar")
     implementation("com.google.cloud:google-cloud-vision:2.0.0")
     implementation("com.google.auth:google-auth-library-oauth2-http:0.25.2")
-
     implementation("com.github.barteksc:android-pdf-viewer:2.8.2")
     implementation ("com.github.barteksc:pdfium-android:1.9.0")
     implementation ("io.grpc:grpc-okhttp:1.40.1")
