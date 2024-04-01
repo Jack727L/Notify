@@ -48,11 +48,12 @@ class SearchModel(private val fileUploadService: FileUploadImpl) : ViewModel() {
         })
     }
     private val weights = mapOf(
+        "extractedText" to 5,
         "fileName" to 5,
         "year" to 1,
-        "term" to 2,
+        "term" to 1,
         "subject" to 3,
-        "courseNum" to 4
+        "courseNum" to 5
     )
     val filteredPdfFiles = searchText
         .debounce(500L)
@@ -82,21 +83,26 @@ class SearchModel(private val fileUploadService: FileUploadImpl) : ViewModel() {
         var score = 0
         val lowerCaseQuery = query.lowercase()
 
-        // Consider concatenated fields for comparison
-        val concatenatedSubjectCourse = "${pdfFile.year}${pdfFile.term}${pdfFile.subject}${pdfFile.courseNum}${pdfFile.fileName}".lowercase()
+        // Use safe calls and provide default empty strings if any value is null
+        val concatenatedSubjectCourse = "${pdfFile.year ?: ""}${pdfFile.term ?: ""}${pdfFile.subject ?: ""}${pdfFile.courseNum ?: ""}${pdfFile.fileName ?: ""}".lowercase()
 
         lowerCaseQuery.split(" ").forEach { word ->
-            if (pdfFile.fileName.lowercase().contains(word)) score += weights["fileName"] ?: 0
-            if (pdfFile.year.lowercase().contains(word)) score += weights["year"] ?: 0
-            if (pdfFile.term.lowercase().contains(word)) score += weights["term"] ?: 0
-            if (pdfFile.subject.lowercase().contains(word)) score += weights["subject"] ?: 0
-            if (pdfFile.courseNum.lowercase().contains(word)) score += weights["courseNum"] ?: 0
-            // Check if the query matches the concatenated subject and course number
-            if (concatenatedSubjectCourse.contains(word)) score += (weights["subject"] ?: 0) + (weights["courseNum"] ?: 0)
-        }
+            // Check each field individually with safe calls and fallback to empty string
+            if (pdfFile.fileName?.lowercase()?.contains(word) == true) score += weights["fileName"] ?: 0
+            if (pdfFile.year?.lowercase()?.contains(word) == true) score += weights["year"] ?: 0
+            if (pdfFile.term?.lowercase()?.contains(word) == true) score += weights["term"] ?: 0
+            if (pdfFile.subject?.lowercase()?.contains(word) == true) score += weights["subject"] ?: 0
+            if (pdfFile.courseNum?.lowercase()?.contains(word) == true) score += weights["courseNum"] ?: 0
+            if (pdfFile.extractedText?.lowercase()?.contains(word) == true) score += weights["extractedText"] ?: 0
 
+            // Check against the concatenated fields
+            if (concatenatedSubjectCourse.contains(word)) {
+                score += (weights["subject"] ?: 0) + (weights["courseNum"] ?: 0) + (weights["term"] ?: 0) + (weights["year"] ?: 0) + (weights["fileName"] ?: 0)
+            }
+        }
         return score
     }
+
 
 
 }

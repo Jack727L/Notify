@@ -76,7 +76,7 @@ fun NoteCard(
 ) {
     val encodedUrl = URLEncoder.encode(downloadUrl, StandardCharsets.UTF_8.toString())
 
-    val truncatedTitle: String = title.substring(0, 10) + "..."
+    val truncatedTitle: String = if (title.length > 10) title.substring(0, 10) + "..." else title
     var truncatedLikes: String = likes.toString()
     if (likes > 9999) {
         truncatedLikes = "9999+"
