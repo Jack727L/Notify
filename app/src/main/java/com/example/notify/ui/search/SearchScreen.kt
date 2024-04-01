@@ -93,10 +93,8 @@ fun SearchScreen(onBackClick: () -> Unit, navController: NavHostController, curr
                     )
                 }
             } else if (filteredPdfFiles.isNotEmpty()) {
-                // Use NoteList to display filtered PDF files
                 NoteList(pdfFiles = filteredPdfFiles, navController = navController, currentUserId = currentUserId)
             } else {
-                // Display some message when no files are found
                 Text("No files found", modifier = Modifier.padding(16.dp))
             }
         }
