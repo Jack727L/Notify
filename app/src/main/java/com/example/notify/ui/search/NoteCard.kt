@@ -1,5 +1,7 @@
 package com.example.notify.ui.search
 
+import android.graphics.BitmapFactory
+import android.util.Base64
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -8,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -24,16 +27,17 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.notify.R
 import com.example.notify.Services.UploadService.PdfFile
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
@@ -55,13 +59,31 @@ fun NoteList(pdfFiles: List<PdfFile>, navController: NavHostController, currentU
                         .padding(6.dp)
                         .fillMaxWidth(),
                     currentUserId = currentUserId,
-                    pushKey = pdfFile.pushKey
+                    pushKey = pdfFile.pushKey,
+                        base64Image = pdfFile.firstPageImageBase64
                 )
             }
 
         }
     }
 }
+@Composable
+fun Base64Image(base64String: String, contentDescription: String?, modifier: Modifier = Modifier) {
+    val imageBitmap: ImageBitmap? = remember(base64String) {
+        val imageBytes = Base64.decode(base64String, Base64.DEFAULT)
+        BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)?.asImageBitmap()
+    }
+
+    imageBitmap?.let {
+        Image(
+                bitmap = it,
+                contentDescription = contentDescription,
+                modifier = modifier.fillMaxSize(), // Modify this line to scale the image
+                contentScale = ContentScale.Crop
+        )
+    }
+}
+
 @Composable
 fun NoteCard(
     id: String,
@@ -72,7 +94,8 @@ fun NoteCard(
     downloadUrl: String,
     modifier: Modifier = Modifier,
     currentUserId: String,
-    pushKey: String
+    pushKey: String,
+    base64Image: String,
 ) {
     val encodedUrl = URLEncoder.encode(downloadUrl, StandardCharsets.UTF_8.toString())
 
@@ -118,11 +141,11 @@ fun NoteCard(
                     }
                 }
             ) { paddingValues ->
-                Box(modifier=Modifier.padding(paddingValues)) {
-                    Image(
-                        painter=painterResource(id = R.drawable.facebook),
-                        contentDescription=contentDescription,
-                        contentScale= ContentScale.Crop,
+                Box(modifier = Modifier.padding(paddingValues).fillMaxSize()) { // fillMaxSize() makes the Box fill its parent
+                    Base64Image(
+                            base64String = base64Image,
+                            contentDescription = contentDescription,
+                            modifier = Modifier.fillMaxSize() // This makes the Image fill the Box
                     )
                 }
             }
