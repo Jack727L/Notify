@@ -1,13 +1,10 @@
 package com.example.notify.Services.UploadService
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.net.Uri
-import android.util.Base64
 import android.util.Log
 import androidx.compose.runtime.MutableState
-import com.example.notify.Services.ImageToTextService.TextDetection.detectText
-import com.example.notify.Services.PdfToImageService.PdfToImageConverter
+import androidx.core.graphics.createBitmap
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -15,8 +12,16 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.storageMetadata
-import java.io.ByteArrayOutputStream
 import javax.inject.Inject
+import com.example.notify.Services.PdfToImageService.PdfToImageConverter
+import com.example.notify.Services.ImageToTextService.TextDetection.detectText
+import android.graphics.Bitmap
+import android.util.Base64
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
+import java.util.logging.Handler
 
 fun logBitmapAsBase64(bitmap: Bitmap) {
     val outputStream = ByteArrayOutputStream()
@@ -70,11 +75,9 @@ class FileUploadImpl @Inject constructor (
             } else {
                 bitmaps.forEachIndexed { index, bitmap ->
                     logBitmapAsBase64(bitmap)
-                if(index == 0) {
-                    val stream = ByteArrayOutputStream()
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
-                    firstPageByteArray = stream.toByteArray()
-                }
+//                if(index == 0) {
+//                    Log.d("page num, ", index.toString())
+//                }
                     val text = detectText(context, bitmap)
                     Log.d("extracted text: ", text)
                     detectedTexts += text
@@ -87,7 +90,7 @@ class FileUploadImpl @Inject constructor (
             mStorageRef.putFile(uri, metadata).addOnSuccessListener {
                 mStorageRef.downloadUrl.addOnSuccessListener { downloadUri ->
                     fdbRef.push().key?.let { pushKey ->
-                        val pdfFile = PdfFile(fileName.orEmpty(), downloadUri.toString(), uid, subject, courseNum, term, year, 0, 0, uuid, pushKey, detectedTexts, firstPageByteArray)
+                        val pdfFile = PdfFile(fileName.orEmpty(), downloadUri.toString(), uid, subject, courseNum, term, year, 0, 0, uuid, pushKey, detectedTexts)
                         // store user uploaded files in newly constructed user db
                         val userPostReference = FirebaseDatabase.getInstance().reference.child("users").child(uid).child("user_posts").child(pushKey)
                         userPostReference.setValue(true).addOnSuccessListener {
