@@ -27,12 +27,12 @@ class ProfileScreenModel: ViewModel() {
     fun retrieveUserPdfFiles(userId: String, like_or_collect: String) {
         if (like_or_collect == "likes") {
             infoRetrieve.retrieveUserCollectedPdfFiles(userId, like_or_collect, object : PdfFilesRetrievalCallback {
-                override fun onSuccess(likedFiles: List<PdfFile>) {
-                    if (likedFiles.isNotEmpty()) {
+                override fun onSuccess(pdfFiles: List<PdfFile>) {
+                    if (pdfFiles.isNotEmpty()) {
                         _message.postValue("Collected PDF files retrieved successfully!")
-                        _likedFiles.postValue(likedFiles)
+                        _likedFiles.postValue(pdfFiles)
                         // Optional: Log each retrieved PDF file name
-                        likedFiles.forEach { pdfFile ->
+                        pdfFiles.forEach { pdfFile ->
                             Log.d("YourViewModel", "Retrieved PDF File: ${pdfFile.fileName}")
                         }
                     } else {
@@ -48,12 +48,12 @@ class ProfileScreenModel: ViewModel() {
             })
         } else if (like_or_collect == "collects") {
             infoRetrieve.retrieveUserCollectedPdfFiles(userId, like_or_collect, object : PdfFilesRetrievalCallback {
-                override fun onSuccess(collectedFiles: List<PdfFile>) {
-                    if (collectedFiles.isNotEmpty()) {
+                override fun onSuccess(pdfFiles: List<PdfFile>) {
+                    if (pdfFiles.isNotEmpty()) {
                         _message.postValue("Collected PDF files retrieved successfully!")
-                        _collectedFiles.postValue(collectedFiles)
+                        _collectedFiles.postValue(pdfFiles)
                         // Optional: Log each retrieved PDF file name
-                        collectedFiles.forEach { pdfFile ->
+                        pdfFiles.forEach { pdfFile ->
                             Log.d("YourViewModel", "Retrieved PDF File: ${pdfFile.fileName}")
                         }
                     } else {
