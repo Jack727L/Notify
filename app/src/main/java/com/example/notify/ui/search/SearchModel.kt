@@ -80,15 +80,25 @@ class SearchModel(private val fileUploadService: FileUploadImpl) : ViewModel() {
 
     private fun calculateScore(pdfFile: PdfFile, query: String): Int {
         var score = 0
-        query.split(" ").forEach { word ->
-            if (pdfFile.fileName.contains(word, ignoreCase = true)) score += weights["fileName"] ?: 0
-            if (pdfFile.year.contains(word, ignoreCase = true)) score += weights["year"] ?: 0
-            if (pdfFile.term.contains(word, ignoreCase = true)) score += weights["term"] ?: 0
-            if (pdfFile.subject.contains(word, ignoreCase = true)) score += weights["subject"] ?: 0
-            if (pdfFile.courseNum.contains(word, ignoreCase = true)) score += weights["courseNum"] ?: 0
+        val lowerCaseQuery = query.lowercase()
+
+        // Consider concatenated fields for comparison
+        val concatenatedSubjectCourse = "${pdfFile.year}${pdfFile.term}${pdfFile.subject}${pdfFile.courseNum}${pdfFile.fileName}".lowercase()
+
+        lowerCaseQuery.split(" ").forEach { word ->
+            if (pdfFile.fileName.lowercase().contains(word)) score += weights["fileName"] ?: 0
+            if (pdfFile.year.lowercase().contains(word)) score += weights["year"] ?: 0
+            if (pdfFile.term.lowercase().contains(word)) score += weights["term"] ?: 0
+            if (pdfFile.subject.lowercase().contains(word)) score += weights["subject"] ?: 0
+            if (pdfFile.courseNum.lowercase().contains(word)) score += weights["courseNum"] ?: 0
+            // Check if the query matches the concatenated subject and course number
+            if (concatenatedSubjectCourse.contains(word)) score += (weights["subject"] ?: 0) + (weights["courseNum"] ?: 0)
         }
+
         return score
     }
+
+
 }
 
 class SearchModelFactory(private val fileUploadService: FileUploadImpl) : ViewModelProvider.Factory {
