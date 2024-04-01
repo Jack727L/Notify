@@ -45,6 +45,10 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.8"
     }
+
+    packagingOptions {
+        exclude( "META-INF/*")
+    }
 }
 
 dependencies {
@@ -78,6 +82,16 @@ dependencies {
     implementation("com.google.android.gms:play-services-auth:20.4.0")
     implementation ("com.github.barteksc:android-pdf-viewer:2.8.2")
     implementation ("androidx.compose.runtime:runtime-livedata:1.6.3")
+    implementation("com.joanzapata.pdfview:android-pdfview:1.0.4@aar")
+    implementation("com.google.cloud:google-cloud-vision:2.0.0")
+    implementation("com.google.auth:google-auth-library-oauth2-http:0.25.2")
+
+    implementation("com.github.barteksc:android-pdf-viewer:2.8.2")
+    implementation ("com.github.barteksc:pdfium-android:1.9.0")
+    implementation ("io.grpc:grpc-okhttp:1.40.1")
+    implementation ("io.grpc:grpc-stub:1.40.1")
+    implementation ("javax.annotation:javax.annotation-api:1.3.2")
+
 }
 
 kapt {
