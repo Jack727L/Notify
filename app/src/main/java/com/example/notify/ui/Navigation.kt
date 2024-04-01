@@ -19,7 +19,9 @@ import com.example.notify.ui.upload.UploadScreen
 sealed class Route {
     data class LoginScreen(val name:String = "Login"): Route()
     data class SignUpScreen(val name:String = "Signup"): Route()
-    data class SearchScreen(val name:String = "Search"): Route()
+    data class SearchScreen(val name: String = "Search/{userId}") : Route() {
+        fun createRoute(userId: String) = "Search/$userId"
+    }
     data class HomeScreen(val name:String = "Home"): Route()
     data class ProfileScreen(val name:String = "Profile"): Route()
     data class SettingsScreen(val name:String = "Setting"): Route()
@@ -50,13 +52,18 @@ fun Navigation(navHostController: NavHostController) {
         composable(route = Route.SignUpScreen().name) {
             SignUpScreen(navHostController)
         }
-        composable(route = Route.SearchScreen().name) {
+        composable(
+            route = Route.SearchScreen().name,
+            arguments = listOf(navArgument("userId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            // Retrieve the user ID from the arguments
+            val userId = backStackEntry.arguments?.getString("userId")
+
+            // Call SearchScreen and pass the retrieved userId
             SearchScreen(
-                onBackClick = {
-                    navHostController.navigate(
-                        Route.HomeScreen().name
-                    )
-                }
+                onBackClick = { navHostController.popBackStack() },
+                navController = navHostController,
+                currentUserId = userId  // Passing the retrieved userId
             )
         }
         composable(route = Route.ProfileScreen().name+"/{id}/{currentUserId}/{currentDisplay}",

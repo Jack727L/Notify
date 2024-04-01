@@ -51,6 +51,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.notify.R
 import com.example.notify.Services.UploadService.PdfFile
+import com.example.notify.ui.Route
 import com.example.notify.ui.homePage.HomePageViewModel
 import com.example.notify.ui.theme.Black
 import com.google.firebase.Firebase
@@ -232,7 +233,11 @@ private fun TopSection(navController: NavHostController, currentUserId: String) 
                     imageVector = Icons.Filled.Search,
                     contentDescription = "Search",
                     modifier = Modifier
-                        .clickable { navController.navigate("Search") }
+                        .clickable {
+                            // Assuming you have the currentUserId available here
+                            val userId = currentUserId ?: "defaultUserId" // Use a default or handle the null case as needed
+                            navController.navigate(Route.SearchScreen().createRoute(userId))
+                        }
                         .size(40.dp)
                         .padding(end = 8.dp), // Add some space between the search icon and the user icon
                     tint = uiColor

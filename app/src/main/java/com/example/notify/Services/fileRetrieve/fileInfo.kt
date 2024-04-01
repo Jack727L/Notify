@@ -213,4 +213,27 @@ class fileInfo {
             Log.e("DeleteService", "Error deleting PDF file with pushKey $pushKey from Realtime Database", exception)
         }
     }
+    // retrieve userName
+    fun fetchUserFullName(userId: String, callback: (String?) -> Unit) {
+        val userRef = userDatabaseReference.child(userId)
+        userRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val firstName = snapshot.child("firstName").getValue(String::class.java)
+                val lastName = snapshot.child("lastName").getValue(String::class.java)
+                if (firstName != null && lastName != null) {
+                    // Concatenate first name and last name with a space in between
+                    val fullName = "$firstName $lastName"
+                    callback(fullName)
+                } else {
+                    Log.e("fileInfo", "Unable to fetch full name for user $userId")
+                    callback(null)
+                }
+            }
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("fileInfo", "fetchUserFullName:onCancelled", error.toException())
+                callback(null)
+            }
+        })
+    }
+
 }
