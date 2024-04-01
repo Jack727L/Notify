@@ -58,8 +58,8 @@ import androidx.documentfile.provider.DocumentFile
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.notify.R
+import com.example.notify.Services.CourseService.subjectToCourseCodes
 import kotlinx.coroutines.launch
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -255,7 +255,8 @@ fun UploadScreen( //refactor padding
 
                         DropdownMenu(
                             modifier = Modifier
-                                .background(Color.LightGray),
+                                .background(Color.LightGray)
+                                .fillMaxHeight(0.3f),
                             expanded = isSubjectExpanded,
                             onDismissRequest = { setIsSubjectExpanded(false) }) {
                             DropdownMenuItem(
@@ -263,7 +264,17 @@ fun UploadScreen( //refactor padding
                                 onClick = {
                                     setSubject("MATH")
                                     setIsSubjectExpanded(false)
-                                })
+                                }
+                            )
+                            subjectToCourseCodes.keys.forEach { subject ->
+                                DropdownMenuItem(
+                                    text = {Text(text = subject)},
+                                    onClick = {
+                                        setSubject(subject)
+                                        setIsSubjectExpanded(false)
+                                    }
+                                )
+                            }
                         }
                     }
                 }
@@ -320,15 +331,18 @@ fun UploadScreen( //refactor padding
 
                         DropdownMenu(
                             modifier = Modifier
-                                .background(Color.LightGray),
+                                .background(Color.LightGray)
+                                .fillMaxHeight(0.3f),
                             expanded = isNumExpanded,
                             onDismissRequest = { setIsNumExpanded(false) }) {
-                            DropdownMenuItem(
-                                text = { Text(text = "235") },
-                                onClick = {
-                                    setCourseNum("235")
-                                    setIsNumExpanded(false)
+                            subjectToCourseCodes[subject]?.forEach { code ->
+                                DropdownMenuItem(
+                                    text = { Text(text = code) },
+                                    onClick = {
+                                        setCourseNum(code)
+                                        setIsNumExpanded(false)
                                 })
+                            }
                         }
                     }
                 }
@@ -336,7 +350,7 @@ fun UploadScreen( //refactor padding
 
 
 
-            Spacer(modifier = Modifier.height(15.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
             Divider(color = shapeColor, thickness = 2.dp, modifier = Modifier.padding(start = 15.dp, end=15.dp))
             Row(
