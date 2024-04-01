@@ -1,6 +1,7 @@
 package com.example.notify.ui.note
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -35,7 +36,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -108,7 +108,7 @@ fun PdfView(
             containerColor = Color.Transparent,
             topBar = { TopSection(navController = navController, id = id, currentUserId = userId,
                 pushKey=pushKey, noteScreenModel=noteScreenModel) },
-            bottomBar = { Bottom (modifier = Modifier.fillMaxWidth(), profileScreenModel, pushKey, id, userId, noteScreenModel, fileName) }
+            bottomBar = { Bottom (modifier = Modifier.fillMaxWidth(), pushKey, id, userId, noteScreenModel, fileName) }
         ) { paddingValues ->
             Center(
                 modifier = Modifier
@@ -144,22 +144,19 @@ private fun Center(modifier: Modifier=Modifier, downloadUrl: InputStream?) {
 
 @Composable
 private fun Bottom(modifier:Modifier = Modifier,
-                   profileScreenModel: ProfileScreenModel, pushKey: String, id: String,
+                   pushKey: String, id: String,
                    currentUserId: String, noteScreenModel:NoteScreenModel,
                    fileName: String) {
-    var favorite by remember { mutableIntStateOf(0) }
-    var collect by remember { mutableIntStateOf(0) }
-
+    val favorite by noteScreenModel.like.observeAsState(initial = 0)
+    val collect by noteScreenModel.collect.observeAsState(initial = 0)
     noteScreenModel.fetchLikes(pushKey)
-    favorite = noteScreenModel.getLikes()
     noteScreenModel.fetchCollects(pushKey)
-    collect = noteScreenModel.getCollects()
     val uiColor = if (isSystemInDarkTheme()) Color.White else Black
 
     Column(modifier=modifier) {
-        Row(modifier=Modifier
+        Row(modifier= Modifier
             .align(Alignment.Start)
-            .padding(start=10.dp),) {
+            .padding(start = 10.dp),) {
             Text(fileName, maxLines=2)
         }
         Row(modifier=Modifier.align(Alignment.End),
@@ -168,16 +165,10 @@ private fun Bottom(modifier:Modifier = Modifier,
                 addFavorite={
                     noteScreenModel.updateLikes(pushKey, currentUserId, true)
                     noteScreenModel.fetchLikes(pushKey)
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        favorite = noteScreenModel.getLikes()
-                    }, 100)
                 },
                 subFavorite={
                     noteScreenModel.updateLikes(pushKey, currentUserId, false)
                     noteScreenModel.fetchLikes(pushKey)
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        favorite = noteScreenModel.getLikes()
-                    }, 100)
                 },
                 color=uiColor,
                 id = currentUserId,
@@ -188,16 +179,10 @@ private fun Bottom(modifier:Modifier = Modifier,
                 addCollect={
                     noteScreenModel.updateCollects(pushKey, currentUserId, true)
                     noteScreenModel.fetchCollects(pushKey)
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        collect = noteScreenModel.getCollects()
-                    }, 100)
                 },
                 subCollect={
                     noteScreenModel.updateCollects(pushKey, currentUserId, false)
                     noteScreenModel.fetchCollects(pushKey)
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        collect = noteScreenModel.getCollects()
-                    }, 100)
                 },
                 color=uiColor,
                 id = currentUserId,
@@ -221,7 +206,7 @@ private fun TopSection(navController: NavHostController, id: String,
         Row (
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal=16.dp),
+                .padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically
         )
@@ -231,7 +216,7 @@ private fun TopSection(navController: NavHostController, id: String,
                 modifier= Modifier
                     .height(40.dp)
                     .width(40.dp)
-                    .padding(end=16.dp),
+                    .padding(end = 16.dp),
                 contentPadding = PaddingValues(1.dp),
                 shape= RectangleShape,
                 colors = ButtonDefaults.buttonColors(Color.Transparent)
@@ -283,18 +268,23 @@ fun FavoriteButton(
     var isFavorite by remember { mutableStateOf(false) }
     profileScreenModel.retrieveUserPdfFiles(id, "likes")
     val likedFiles by profileScreenModel.likedFiles.observeAsState(initial = emptyList())
-    Handler(Looper.getMainLooper()).postDelayed({
-        run breaking@ {
-            likedFiles.forEach{pdfFile ->
-                if (pdfFile.pushKey == pushKey) {
-                    isFavorite = true
-                    return@breaking
-                } else {
-                    isFavorite = false
+    LaunchedEffect(Unit) {
+        Handler(Looper.getMainLooper()).postDelayed({
+            likedFiles.forEach{pdfFile->
+                Log.d("LikedFilesTest", pdfFile.pushKey)
+            }
+            run breaking@ {
+                likedFiles.forEach{pdfFile ->
+                    if (pdfFile.pushKey == pushKey) {
+                        isFavorite = true
+                        return@breaking
+                    } else {
+                        isFavorite = false
+                    }
                 }
             }
-        }
-    }, 100)
+        }, 100)
+    }
 
     IconToggleButton(
         checked = isFavorite,
@@ -307,20 +297,12 @@ fun FavoriteButton(
             isFavorite = !isFavorite
         }
     ) {
-        if (isFavorite) {
-            Icon(
-                tint = Color.Red,
-                imageVector = Icons.Filled.Favorite,
-                contentDescription = null
-            )
-        } else {
-            Icon(
-                tint = color,
-                imageVector = Icons.Default.FavoriteBorder,
-                contentDescription = null
-            )
-        }
-
+        Icon(
+            tint = if (isFavorite) Color.Red else color,
+            imageVector = if (isFavorite) Icons.Filled.Favorite
+            else Icons.Default.FavoriteBorder,
+            contentDescription = null
+        )
     }
 
 }
@@ -338,18 +320,20 @@ fun CollectButton(
     var isCollect by remember { mutableStateOf(false) }
     profileScreenModel.retrieveUserPdfFiles(id, "collects")
     val collectedFiles by profileScreenModel.collectedFiles.observeAsState(initial = emptyList())
-    Handler(Looper.getMainLooper()).postDelayed({
-        run breaking@ {
-            collectedFiles.forEach{pdfFile ->
-                if (pdfFile.pushKey == pushKey) {
-                    isCollect = true
-                    return@breaking
-                } else {
-                    isCollect = false
+    LaunchedEffect(Unit) {
+        Handler(Looper.getMainLooper()).postDelayed({
+            run breaking@ {
+                collectedFiles.forEach{pdfFile ->
+                    if (pdfFile.pushKey == pushKey) {
+                        isCollect = true
+                        return@breaking
+                    } else {
+                        isCollect = false
+                    }
                 }
             }
-        }
-    }, 100)
+        }, 100)
+    }
     IconToggleButton(
         checked = isCollect,
         onCheckedChange = {
@@ -479,141 +463,6 @@ fun rememberFlag(): ImageVector {
                 horizontalLineToRelative(-8.916f)
                 verticalLineTo(19.5f)
                 horizontalLineToRelative(12.666f)
-                close()
-            }
-        }.build()
-    }
-}
-@Composable
-fun starFilled(color: Color): ImageVector {
-    return remember {
-        ImageVector.Builder(
-            name = "star",
-            defaultWidth = 40.0.dp,
-            defaultHeight = 40.0.dp,
-            viewportWidth = 40.0f,
-            viewportHeight = 40.0f
-        ).apply {
-            path(
-                fill = SolidColor(color),
-                fillAlpha = 1f,
-                stroke = null,
-                strokeAlpha = 1f,
-                strokeLineWidth = 1.0f,
-                strokeLineCap = StrokeCap.Butt,
-                strokeLineJoin = StrokeJoin.Miter,
-                strokeLineMiter = 1f,
-                pathFillType = PathFillType.NonZero
-            ) {
-                moveTo(13.667f, 33.958f)
-                quadToRelative(-1.042f, 0.75f, -2.084f, 0.021f)
-                quadToRelative(-1.041f, -0.729f, -0.625f, -1.979f)
-                lineToRelative(2.417f, -7.875f)
-                lineToRelative(-6.208f, -4.458f)
-                quadToRelative(-1.084f, -0.75f, -0.709f, -1.979f)
-                quadToRelative(0.375f, -1.23f, 1.667f, -1.23f)
-                horizontalLineToRelative(7.708f)
-                lineToRelative(2.5f, -8.25f)
-                quadToRelative(0.167f, -0.625f, 0.646f, -0.937f)
-                quadToRelative(0.479f, -0.313f, 1.021f, -0.313f)
-                quadToRelative(0.542f, 0f, 1.021f, 0.313f)
-                quadToRelative(0.479f, 0.312f, 0.687f, 0.937f)
-                lineToRelative(2.459f, 8.25f)
-                horizontalLineToRelative(7.708f)
-                quadToRelative(1.292f, 0f, 1.667f, 1.23f)
-                quadToRelative(0.375f, 1.229f, -0.709f, 1.979f)
-                lineToRelative(-6.208f, 4.458f)
-                lineTo(29.083f, 32f)
-                quadToRelative(0.375f, 1.25f, -0.666f, 1.979f)
-                quadToRelative(-1.042f, 0.729f, -2.084f, -0.062f)
-                lineToRelative(-6.291f, -4.792f)
-                close()
-            }
-        }.build()
-    }
-}
-
-@Composable
-fun rememberscanDelete(color: Color = Color.White): ImageVector {
-    return remember {
-        ImageVector.Builder(
-            name = "scan_delete",
-            defaultWidth = 40.0.dp,
-            defaultHeight = 40.0.dp,
-            viewportWidth = 40.0f,
-            viewportHeight = 40.0f
-        ).apply {
-            path(
-                fill = SolidColor(color),
-                fillAlpha = 1f,
-                stroke = null,
-                strokeAlpha = 1f,
-                strokeLineWidth = 1.0f,
-                strokeLineCap = StrokeCap.Butt,
-                strokeLineJoin = StrokeJoin.Miter,
-                strokeLineMiter = 1f,
-                pathFillType = PathFillType.NonZero
-            ) {
-                moveTo(234.985f, 251.652f)
-                verticalLineToRelative(186f)
-                verticalLineToRelative(-186f)
-                verticalLineToRelative(648.696f)
-                verticalLineToRelative(-8.283f)
-                verticalLineToRelative(8.283f)
-                verticalLineToRelative(-648.696f)
-                close()
-                moveToRelative(0f, 733.508f)
-                quadToRelative(-35.064f, 0f, -59.938f, -24.874f)
-                quadToRelative(-24.874f, -24.874f, -24.874f, -59.938f)
-                verticalLineTo(251.652f)
-                quadToRelative(0f, -35.22f, 24.874f, -60.204f)
-                quadToRelative(24.874f, -24.985f, 59.938f, -24.985f)
-                horizontalLineToRelative(310.233f)
-                quadToRelative(17.34f, 0f, 33.054f, 6.79f)
-                quadToRelative(15.714f, 6.79f, 27.869f, 18.585f)
-                lineToRelative(178.162f, 178.047f)
-                quadToRelative(12.154f, 12.129f, 19.027f, 27.897f)
-                quadToRelative(6.874f, 15.768f, 6.874f, 33.167f)
-                verticalLineToRelative(194.842f)
-                quadToRelative(-19.711f, -9.435f, -40.873f, -14.946f)
-                quadToRelative(-21.162f, -5.511f, -44.316f, -6.845f)
-                verticalLineTo(437.652f)
-                horizontalLineTo(622.204f)
-                quadToRelative(-35.72f, 0f, -60.455f, -24.735f)
-                quadToRelative(-24.734f, -24.734f, -24.734f, -60.454f)
-                verticalLineTo(251.652f)
-                horizontalLineToRelative(-302.03f)
-                verticalLineToRelative(648.696f)
-                horizontalLineToRelative(267.457f)
-                quadToRelative(7.203f, 24.261f, 19.993f, 45.642f)
-                quadToRelative(12.79f, 21.38f, 29.826f, 39.17f)
-                horizontalLineTo(234.985f)
-                close()
-                moveToRelative(477.761f, -95.681f)
-                lineToRelative(-54.463f, 54.029f)
-                quadToRelative(-12.87f, 12.036f, -29.687f, 11.909f)
-                quadToRelative(-16.817f, -0.126f, -29.354f, -12.796f)
-                quadToRelative(-13.467f, -12.781f, -13.467f, -29.664f)
-                quadToRelative(0f, -16.884f, 13.325f, -30.264f)
-                lineToRelative(53.508f, -54.037f)
-                lineToRelative(-54.573f, -54.323f)
-                quadToRelative(-12.825f, -12.448f, -12.543f, -29.354f)
-                quadToRelative(0.283f, -16.906f, 13.551f, -30.341f)
-                quadToRelative(12.892f, -13.058f, 29.714f, -13.058f)
-                quadToRelative(16.823f, 0f, 30.203f, 12.948f)
-                lineToRelative(53.786f, 54.573f)
-                lineToRelative(54.573f, -54.573f)
-                quadToRelative(12.26f, -12.26f, 29.492f, -12.06f)
-                quadToRelative(17.231f, 0.199f, 30.192f, 13.052f)
-                quadToRelative(12.381f, 12.553f, 12.215f, 29.47f)
-                quadToRelative(-0.167f, 16.916f, -12.203f, 29.453f)
-                lineToRelative(-54.029f, 54.463f)
-                lineToRelative(54.029f, 54.464f)
-                quadToRelative(12.036f, 12.869f, 12.003f, 29.861f)
-                quadToRelative(-0.032f, 16.991f, -12.886f, 29.862f)
-                quadToRelative(-12.552f, 12.219f, -29.469f, 12.335f)
-                quadToRelative(-16.917f, 0.116f, -29.453f, -11.92f)
-                lineToRelative(-54.464f, -54.029f)
                 close()
             }
         }.build()
