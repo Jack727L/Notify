@@ -1,10 +1,13 @@
 package com.example.notify.Services.UploadService
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.net.Uri
+import android.util.Base64
 import android.util.Log
 import androidx.compose.runtime.MutableState
-import androidx.core.graphics.createBitmap
+import com.example.notify.Services.ImageToTextService.TextDetection.detectText
+import com.example.notify.Services.PdfToImageService.PdfToImageConverter
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -12,16 +15,8 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.storageMetadata
-import javax.inject.Inject
-import com.example.notify.Services.PdfToImageService.PdfToImageConverter
-import com.example.notify.Services.ImageToTextService.TextDetection.detectText
-import android.graphics.Bitmap
-import android.util.Base64
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
-import java.util.logging.Handler
+import javax.inject.Inject
 
 fun logBitmapAsBase64(bitmap: Bitmap) {
     val outputStream = ByteArrayOutputStream()
@@ -48,7 +43,7 @@ class FileUploadImpl @Inject constructor (
         term: String,
         year: String,
         uid: String,
-        uuid: String
+        uuid: String,
     ) {
         var firstPageByteArray = ByteArray(0)
 
@@ -67,6 +62,12 @@ class FileUploadImpl @Inject constructor (
 
         pdfFileUri?.let { uri ->
             val bitmaps = pdfToImageConverter.convertPdfToImages(uri, context)
+            var firstPageImageBase64 = ""
+            if (bitmaps.isNotEmpty()) {
+                val firstPageBitmap = bitmaps.first()
+                firstPageImageBase64 = bitmapToBase64(firstPageBitmap)
+                // Now you have the first page's image encoded as a Base64 string
+            }
 
             if (bitmaps.size == 1) {
                 val text = detectText(context, bitmaps[0])
@@ -90,7 +91,7 @@ class FileUploadImpl @Inject constructor (
             mStorageRef.putFile(uri, metadata).addOnSuccessListener {
                 mStorageRef.downloadUrl.addOnSuccessListener { downloadUri ->
                     fdbRef.push().key?.let { pushKey ->
-                        val pdfFile = PdfFile(fileName.orEmpty(), downloadUri.toString(), uid, subject, courseNum, term, year, 0, 0, uuid, pushKey, detectedTexts)
+                        val pdfFile = PdfFile(fileName.orEmpty(), downloadUri.toString(), uid, subject, courseNum, term, year, 0, 0, uuid, pushKey, detectedTexts, firstPageImageBase64)
                         // store user uploaded files in newly constructed user db
                         val userPostReference = FirebaseDatabase.getInstance().reference.child("users").child(uid).child("user_posts").child(pushKey)
                         userPostReference.setValue(true).addOnSuccessListener {
@@ -144,6 +145,11 @@ class FileUploadImpl @Inject constructor (
                 callback.onError(error.toException().message ?: "Error retrieving data")
             }
         })
+    }
+    fun bitmapToBase64(bitmap: Bitmap): String {
+        val outputStream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+        return Base64.encodeToString(outputStream.toByteArray(), Base64.DEFAULT)
     }
 }
 

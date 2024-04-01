@@ -16,7 +16,8 @@ interface FileUpload {
                                         term: String,
                                         year: String,
                                         uid: String,
-                                        uuid: String)
+                                        uuid: String
+    )
 }
 
 interface PdfFilesRetrievalCallback {
