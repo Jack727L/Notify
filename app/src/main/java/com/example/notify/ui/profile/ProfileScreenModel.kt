@@ -18,6 +18,9 @@ class ProfileScreenModel: ViewModel() {
     val likedFiles: LiveData<List<PdfFile>> = _likedFiles
     val collectedFiles: LiveData<List<PdfFile>> = _collectedFiles
 
+    private val _fullName = MutableLiveData<String>()
+    val fullName: LiveData<String> = _fullName
+
     private val _message = MutableLiveData<String>()
     val message: LiveData<String> = _message
     // the intake will be the current user id, which returns all of the files that the user current liked
@@ -86,6 +89,11 @@ class ProfileScreenModel: ViewModel() {
                 }
             })
         }
-
+    }
+    fun fetchUserFullName(userId: String) {
+        infoRetrieve.fetchUserFullName(userId) { fullName ->
+            val nonNullFullName = fullName ?: "Unknown User"
+            _fullName.postValue(nonNullFullName)
+        }
     }
 }

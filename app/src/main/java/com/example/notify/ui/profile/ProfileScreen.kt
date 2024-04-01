@@ -59,6 +59,10 @@ import com.example.notify.ui.theme.Black
 fun ProfileScreen(id: String, currentUserId: String, currentDisplay: String, navController: NavHostController) {
     val uiBackgroundColor = if (isSystemInDarkTheme()) Color.Black else Color.White
     val profileScreenModel: ProfileScreenModel = viewModel()
+    val fullName by profileScreenModel.fullName.observeAsState("Loading...")
+    LaunchedEffect(key1 = currentUserId) {
+        profileScreenModel.fetchUserFullName(currentUserId)
+    }
     when (currentDisplay) {
         "likes" -> {
             LaunchedEffect(Unit) {
@@ -111,7 +115,7 @@ fun ProfileScreen(id: String, currentUserId: String, currentDisplay: String, nav
                         .fillMaxWidth()
                         .height(250.dp)
                         .background(Color(0xFFBBDEFB)),
-                    userName = "John Doe",
+                    userName = fullName,
                     userId = id,
                     currentUserId = currentUserId,
                     navController = navController
