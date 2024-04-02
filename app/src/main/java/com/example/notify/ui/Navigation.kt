@@ -1,6 +1,5 @@
 package com.example.notify.ui
 
-import SettingsScreen
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -24,7 +23,6 @@ sealed class Route {
     }
     data class HomeScreen(val name:String = "Home"): Route()
     data class ProfileScreen(val name:String = "Profile"): Route()
-    data class SettingsScreen(val name:String = "Setting"): Route()
     data class NoteScreen(val name:String = "Note"): Route()
     data class UploadScreen(val name:String = "Upload"): Route()
 
@@ -77,9 +75,6 @@ fun Navigation(navHostController: NavHostController) {
             if (id != null && currentUserId != null && currentDisplay != null) {
                 ProfileScreen(id, currentUserId, currentDisplay, navHostController)
             }
-        }
-        composable(route = Route.SettingsScreen().name) {
-            SettingsScreen()
         }
         composable(
             route = Route.NoteScreen().name+"/{id}/{downloadUrl}/{pushKey}/{userId}/{fileName}",
