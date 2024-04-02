@@ -266,13 +266,6 @@ private fun TopSection(navController: NavHostController, currentUserId: String) 
                     }
                 )
                 DropdownMenuItem(
-                    text = { Text("Setting") },
-                    onClick = {
-                        expanded = false
-                        navController.navigate("setting")
-                    }
-                )
-                DropdownMenuItem(
                     text = { Text("Log Out") },
                     onClick = {
                         expanded = false

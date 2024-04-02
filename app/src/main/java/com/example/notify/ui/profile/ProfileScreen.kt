@@ -60,8 +60,8 @@ fun ProfileScreen(id: String, currentUserId: String, currentDisplay: String, nav
     val uiBackgroundColor = if (isSystemInDarkTheme()) Color.Black else Color.White
     val profileScreenModel: ProfileScreenModel = viewModel()
     val fullName by profileScreenModel.fullName.observeAsState("Loading...")
-    LaunchedEffect(key1 = currentUserId) {
-        profileScreenModel.fetchUserFullName(currentUserId)
+    LaunchedEffect(key1 = id) {
+        profileScreenModel.fetchUserFullName(id)
     }
     when (currentDisplay) {
         "likes" -> {
