@@ -25,7 +25,7 @@ Our design documents can be found at the [Design Documents Wiki page](https://gi
 
 
 ## Meeting minutes and individual developer journals
-Our development journals can be found at the [Development Journal Wiki page](https://git.uwaterloo.ca/p259li/team-102-19/-/wikis/Development-Journals-and-Meeting-Minutes)
+Our meeting minutes and development journals can be found at the [Meeting Minutes and Development Journal Wiki page](https://git.uwaterloo.ca/p259li/team-102-19/-/wikis/Development-Journals-and-Meeting-Minutes)
 
 
 ## Getting Started
