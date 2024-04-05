@@ -25,8 +25,19 @@ Our design documents can be found at the [Design Documents Wiki page](https://gi
 
 
 ## Meeting minutes and individual developer journals
-Our meeting minutes and development journals can be found at the [Meeting Minutes and Development Journal Wiki page](https://git.uwaterloo.ca/p259li/team-102-19/-/wikis/Development-Journals-and-Meeting-Minutes)
+**Meeting Minutes**
+Our meeting minutes can be found at the [Meeting Minutes Wiki page](https://git.uwaterloo.ca/p259li/team-102-19/-/wikis/Development-Journals-and-Meeting-Minutes)
 
+**Individual developer journals**
+
+Tom's Journal: [here](https://docs.google.com/document/d/1ZnBWteDpkYdbT0D_aZzT43J9C6zJNtCknMWr-7yDwZ8/edit?usp=sharing)
+
+Kevin's Journal: [here](https://docs.google.com/document/d/1gwvRMW5f6x2shBSmLjxfTw7ThjeDzw-zzFNhIKzEMXo/edit?usp=sharing)
+
+Jack's Journal: [here](https://docs.google.com/document/d/1Y_xi6vnFtppmlQoPglioqTPr8_U7LeYkY8L45E7R-LY/edit?usp=sharing)
+
+Jenny's Journal:
+[here](https://docs.google.com/document/d/1VOlwwRHXEFXQ-hS0aSxaAdvUbdPEKWkqK1w3lLcO8f0/edit)
 
 ## Getting Started
 
