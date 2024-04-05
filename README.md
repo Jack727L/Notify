@@ -1,12 +1,24 @@
-# Team-102-19
+# NOTIFY
 
-## Project Proposal
+## Product Description
 
-Our project proposal can be found at the [Project Proposal Wiki page](https://git.uwaterloo.ca/p259li/team-102-19/-/wikis/Project-Proposal)
+## Team names & contact info
+Jack Li: 
+Tom Pan: t24pan@uwaterloo.ca
+Jenny Zhang: 
+Kevin Zhang: 
 
-## Development Journal and Meeting Minutes
+## User Documentations
 
+## Design Documents
+
+Our design documents can be found at the [Design Documents Wiki page](https://git.uwaterloo.ca/p259li/team-102-19/-/wikis/Design-Documents)
+
+## List of releases
+
+## Meeting minutes and individual developer journals
 Our development journals can be found at the [Development Journal Wiki page](https://git.uwaterloo.ca/p259li/team-102-19/-/wikis/Development-Journals-and-Meeting-Minutes)
+
 
 ![](images/Notify.png)
 
@@ -23,8 +35,4 @@ Checkout our release note [here](https://git.uwaterloo.ca/p259li/team-102-19/-/r
 To get started with Notify, [download installer](/Notify 4.0.0.apk)
 
 Supporting device : Pixel 6 Pro
-
-## Design Documents
-
-Our design documents can be found at the [Design Documents Wiki page](https://git.uwaterloo.ca/p259li/team-102-19/-/wikis/Design-Documents)
 
