@@ -10,17 +10,17 @@ Our development journals can be found at the [Development Journal Wiki page](htt
 
 ![](images/Notify.png)
 
-## Version 2.0.0
+## Version 4.0.0
 
-**Release Date:** 8-Mar-2024
+**Release Date:** 5-Apr-2024
 
-We are excited to announce the release of Notify version 2.0.0, which brings significant updates and new features to enhance the user experience. This release focuses on improving security with a new authentication system, enriching content interaction with PDF display capabilities, and introducing like and dislike buttons for user feedback.
+We are excited to announce the release of Notify version 4.0.0, which brings significant updates and new features to enhance the user experience.
 
-Checkout our release note [here](https://git.uwaterloo.ca/p259li/team-102-19/-/releases/2.0.0)
+Checkout our release note [here](https://git.uwaterloo.ca/p259li/team-102-19/-/releases/4.0.0)
 
 ## Getting Started
 
-To get started with Notify, [download installer](/Notify 3.0.0.apk)
+To get started with Notify, [download installer](/Notify 4.0.0.apk)
 
 Supporting device : Pixel 6 Pro
 
