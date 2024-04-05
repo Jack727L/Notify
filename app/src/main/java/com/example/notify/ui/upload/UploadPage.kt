@@ -32,7 +32,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -58,10 +57,9 @@ import androidx.documentfile.provider.DocumentFile
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.notify.R
-import com.example.notify.Services.CourseService.subjectToCourseCodes
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun UploadScreen( //refactor padding
     navController : NavController,
@@ -95,6 +93,8 @@ fun UploadScreen( //refactor padding
         mutableStateOf(false)
     }
 
+    val courseCodes = viewModel.getCourseCodes()
+
     val displayToast = remember {mutableStateOf(false)}
     val toastMsg = remember {mutableStateOf("")}
     val uploadProgress = remember{mutableStateOf(0.toFloat())}
@@ -119,7 +119,7 @@ fun UploadScreen( //refactor padding
             Image(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight(fraction = 0.36f),
+                    .fillMaxHeight(fraction = 0.33f),
                 painter = painterResource(id = R.drawable.shape),
                 contentDescription = null,
                 contentScale = ContentScale.FillBounds
@@ -183,6 +183,7 @@ fun UploadScreen( //refactor padding
                     verticalAlignment = Alignment.CenterVertically) {
                     Text(text=fileName.value.orEmpty(),
                         maxLines = 1,
+                        color = uiColor,
                         overflow = TextOverflow.Ellipsis)
                     Icon(
                         imageVector = Icons.Outlined.Edit,
@@ -250,7 +251,6 @@ fun UploadScreen( //refactor padding
                                     setIsSubjectExpanded(!isSubjectExpanded)
                                 },
                             tint = uiColor,
-
                             )
 
                         DropdownMenu(
@@ -259,16 +259,9 @@ fun UploadScreen( //refactor padding
                                 .fillMaxHeight(0.3f),
                             expanded = isSubjectExpanded,
                             onDismissRequest = { setIsSubjectExpanded(false) }) {
-                            DropdownMenuItem(
-                                text = { Text(text = "MATH") },
-                                onClick = {
-                                    setSubject("MATH")
-                                    setIsSubjectExpanded(false)
-                                }
-                            )
-                            subjectToCourseCodes.keys.forEach { subject ->
+                            courseCodes.keys.forEach { subject ->
                                 DropdownMenuItem(
-                                    text = {Text(text = subject)},
+                                    text = {Text(text = subject, color = Color.Black)},
                                     onClick = {
                                         setSubject(subject)
                                         setIsSubjectExpanded(false)
@@ -335,9 +328,9 @@ fun UploadScreen( //refactor padding
                                 .fillMaxHeight(0.3f),
                             expanded = isNumExpanded,
                             onDismissRequest = { setIsNumExpanded(false) }) {
-                            subjectToCourseCodes[subject]?.forEach { code ->
+                            courseCodes[subject]?.forEach { code ->
                                 DropdownMenuItem(
-                                    text = { Text(text = code) },
+                                    text = { Text(text = code, color = Color.Black) },
                                     onClick = {
                                         setCourseNum(code)
                                         setIsNumExpanded(false)
@@ -403,26 +396,25 @@ fun UploadScreen( //refactor padding
                             )
 
                         DropdownMenu(
-                            modifier = Modifier
-                                .background(Color.LightGray),
+                            modifier = Modifier.background(Color.LightGray),
                             expanded = isTermExpanded,
                             onDismissRequest = { setIsTermExpanded(false) }) {
                             DropdownMenuItem(
-                                text = { Text(text = "F") },
+                                text = { Text(text = "F", color = Color.Black) },
                                 onClick = {
                                     setTerm("F")
                                     setIsTermExpanded(false)
                                 }
                             )
                             DropdownMenuItem(
-                                text = { Text(text = "W") },
+                                text = { Text(text = "W", color = Color.Black) },
                                 onClick = {
                                     setTerm("W")
                                     setIsTermExpanded(false)
                                 }
                             )
                             DropdownMenuItem(
-                                text = { Text(text = "S") },
+                                text = { Text(text = "S", color = Color.Black) },
                                 onClick = {
                                     setTerm("S")
                                     setIsTermExpanded(false)
@@ -445,8 +437,10 @@ fun UploadScreen( //refactor padding
 
                 )
             {
-                Row(modifier = Modifier.padding(start = 20.dp),
-                    verticalAlignment = Alignment.CenterVertically)
+                Row(
+                    modifier = Modifier.padding(start = 20.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                )
                 {
                     Image(
                         painter = painterResource(id = R.drawable.baseline_calendar_month_24),
@@ -466,13 +460,14 @@ fun UploadScreen( //refactor padding
                         fontWeight = FontWeight.Bold
                     )
                 }
-                Row (verticalAlignment = Alignment.CenterVertically) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
 
                     Text(
                         text = year,
                         style = MaterialTheme.typography.bodyLarge,
                         color = uiColor,
-                        fontWeight = FontWeight.Bold)
+                        fontWeight = FontWeight.Bold
+                    )
                     Column(modifier = Modifier.padding(end = 15.dp)) {
                         Icon(
                             imageVector = Icons.Outlined.ArrowDropDown,
@@ -493,7 +488,7 @@ fun UploadScreen( //refactor padding
                             onDismissRequest = { setIsYearExpanded(false) }) {
                             for (i in 2024 downTo 2000) {
                                 DropdownMenuItem(
-                                    text = { Text(text = i.toString()) },
+                                    text = { Text(text = i.toString(), color = Color.Black) },
                                     onClick = {
                                         setYear(i.toString())
                                         setIsYearExpanded(false)
@@ -504,18 +499,22 @@ fun UploadScreen( //refactor padding
                     }
                 }
             }
-            Spacer(modifier = Modifier.height(40.dp))
 
-            if (uploadProgress.value != 0.0.toFloat()) {
+            Spacer(modifier = Modifier.height(10.dp))
+            if (uploadProgress.value != 0.0000.toFloat()) {
                 LinearProgressIndicator(
                     progress = { uploadProgress.value.toFloat() },
                     modifier = Modifier.fillMaxWidth(0.7f),
                     color = uiColor,
                 )
             }
-            Spacer(modifier = Modifier.height(10.dp))
-            Box(modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center) {
+            Spacer(modifier = Modifier.height(30.dp))
+
+            Box(modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 16.dp),
+                contentAlignment = Alignment.Center,
+                ) {
                 Button(
                     modifier = Modifier.fillMaxWidth(0.7f),
                     colors = ButtonDefaults.outlinedButtonColors(Color.Transparent),
