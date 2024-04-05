@@ -24,3 +24,7 @@ To get started with Notify, [download installer](/Notify 4.0.0.apk)
 
 Supporting device : Pixel 6 Pro
 
+## Design Documents
+
+Our design documents can be found at the [Design Documents Wiki page](https://git.uwaterloo.ca/p259li/team-102-19/-/wikis/Design_Documents)
+
