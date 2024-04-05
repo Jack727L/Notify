@@ -162,11 +162,10 @@ private fun LogInSection(onLoginClick: () -> Unit,
     LoginTextField(
         value = password,
         label = stringResource(id = R.string.password),
-        trailing = "Forgot?",
         modifier = Modifier.fillMaxWidth(),
+        trailing = "",
         visualTransformation = PasswordVisualTransformation(),
         onValueChange = onPasswordChange
-
     )
 
     Spacer(modifier = Modifier.height(20.dp))
@@ -177,7 +176,13 @@ private fun LogInSection(onLoginClick: () -> Unit,
             .height(40.dp),
         onClick = {
             scope.launch {
-                viewModel.loginUser(email, password)
+                if(email == "" || !email.endsWith("@uwaterloo.ca")) {
+                    Toast.makeText(context, "Please enter a valid Waterloo Email", Toast.LENGTH_LONG).show()
+                } else if(password == "") {
+                    Toast.makeText(context, "Please enter your password", Toast.LENGTH_LONG).show()
+                } else {
+                    viewModel.loginUser(email, password)
+                }
             }
         },
         colors = ButtonDefaults.buttonColors(

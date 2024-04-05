@@ -1,8 +1,10 @@
 package com.example.notify.ui.signup
 
 import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,10 +12,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -71,6 +77,20 @@ fun SignUpScreen(
             .padding(20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(),
+            contentAlignment = Alignment.TopStart
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                contentDescription = "back",
+                modifier = Modifier
+                    .clickable { navHostController.navigate("login") }
+                    .size(30.dp),// Add some space between the search icon and the user icon
+                tint = uiColor
+            )
+        }
         Text(
             text = stringResource(id = R.string.signUp),
             modifier = Modifier
@@ -137,8 +157,33 @@ fun SignUpScreen(
                 .height(50.dp),
             onClick = {
                 if (!email.endsWith("@uwaterloo.ca")) {
-                    Toast.makeText(context, "Please enter a valid waterloo email", Toast.LENGTH_LONG).show()
-                } else {
+                    Toast.makeText(context,
+                        "Please enter a valid waterloo email",
+                        Toast.LENGTH_LONG
+                    ).show()
+                } else if (firstName =="") {
+                    Toast.makeText(context,
+                        "Please enter your first name",
+                        Toast.LENGTH_LONG
+                    ).show()
+
+                } else if (lastName == "") {
+                    Toast.makeText(context,
+                        "Please enter your last name",
+                        Toast.LENGTH_LONG
+                    ).show()
+                } else if (password == "" || confirmPassword == "") {
+                    Toast.makeText(context,
+                        "Please enter your password and confirm it",
+                        Toast.LENGTH_LONG
+                    ).show()
+                } else if (password != confirmPassword) {
+                    Toast.makeText(
+                        context,
+                        "Please enter your password and confirm it",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }else {
                     scope.launch {
                         viewModel.registerUser(email, password, firstName, lastName)
                     }
@@ -160,7 +205,6 @@ fun SignUpScreen(
             if (state.value?.isLoading == true) {
                 CircularProgressIndicator()
             }
-
         }
 
         LaunchedEffect(key1 = state.value?.isSuccess) {

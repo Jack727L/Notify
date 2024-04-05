@@ -5,6 +5,7 @@ import android.content.Context
 import android.net.Uri
 import androidx.compose.runtime.MutableState
 import androidx.lifecycle.ViewModel
+import com.example.notify.Services.CourseService.subjectToCourseCodes
 import com.example.notify.Services.UploadService.FileUpload
 import com.example.notify.Services.UserService.User
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,6 +21,11 @@ class UploadViewModel @Inject constructor (
 ): ViewModel() {
     var pdfFileUri: Uri? = null
     var fileName: String? = null
+
+    fun getCourseCodes() : Map<String, List<String>> {
+        return subjectToCourseCodes
+    }
+
     suspend fun UploadPdfFileToFirebase(
         displayToast: MutableState<Boolean>,
         toastMsg: MutableState<String>,
