@@ -15,7 +15,7 @@ Discover Notify, a note-sharing application designed specifically for the Univer
 ## Team names & contact info
 Jack Li: p259li@uwaterloo.ca        <br>
 Tom Pan: t24pan@uwaterloo.ca        <br>
-Jenny Zhang: j2466zha@uwaterloo.can <br>
+Jenny Zhang: j2466zha@uwaterloo.ca  <br>
 Kevin Zhang: k335zhan@uwaterloo.ca  <br>
 
 ## User Documentation
