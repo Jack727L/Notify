@@ -51,7 +51,7 @@ import androidx.navigation.NavHostController
 import com.example.notify.R
 import com.example.notify.Services.UploadService.PdfFile
 import com.example.notify.ui.home.Bottom
-import com.example.notify.ui.home.NoteList
+import com.example.notify.ui.search.NoteList
 import com.example.notify.ui.theme.Black
 
 @OptIn(ExperimentalMaterial3Api::class)

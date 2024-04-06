@@ -53,6 +53,7 @@ import com.example.notify.R
 import com.example.notify.Services.UploadService.PdfFile
 import com.example.notify.ui.Route
 import com.example.notify.ui.homePage.HomePageViewModel
+import com.example.notify.ui.search.NoteList
 import com.example.notify.ui.theme.Black
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
