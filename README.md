@@ -9,14 +9,7 @@ Key Features:
 **Advanced Search Functionality**: Quickly locate specific notes with our powerful search algorithm that incorporates factors including course code, term, year, and more, making study sessions more efficient. In addition, our integrated OCR technology allows text extraction from scanned documents, enhancing study material accessibility. <br>
 
 ![](images/Notify.png)
-![](images/signup.png)
-![](images/login.png)
-![](images/main.png)
-![](images/upload.png)
-![](images/post.png)
-![](images/note.png)
-![](images/like.png)
-![](images/collects.png)
+![](images/demo.png)
 
 
 ## Team names & contact info
