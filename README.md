@@ -47,3 +47,8 @@ Jack's Journal: [here](https://docs.google.com/document/d/1Y_xi6vnFtppmlQoPglioq
 
 Jenny's Journal:
 [here](https://docs.google.com/document/d/1VOlwwRHXEFXQ-hS0aSxaAdvUbdPEKWkqK1w3lLcO8f0/edit)
+
+## Reflections
+Our reflections can be found at the [Reflections Wiki page](https://git.uwaterloo.ca/p259li/team-102-19/-/wikis/Reflections)
+
+
