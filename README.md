@@ -10,17 +10,17 @@ Key Features: <br>
 **Real-Time Note Sharing**: Engage with peers through live updates and shared notes, enabling instant access to the latest academic resources. <br>
 **Advanced Search Functionality**: Quickly locate specific notes with our powerful search algorithm that incorporates factors including course code, term, year, and more, making study sessions more efficient. In addition, our integrated OCR technology allows text extraction from scanned documents, enhancing study material accessibility. <br>
 
-
 ![](images/demo.png)
 
-
 ## Team names & contact info
-Jack Li:                        <br>
-Tom Pan: t24pan@uwaterloo.ca    <br>
-Jenny Zhang:                    <br>
-Kevin Zhang:                    <br>
+Jack Li: p259li@uwaterloo.ca        <br>
+Tom Pan: t24pan@uwaterloo.ca        <br>
+Jenny Zhang: j2466zha@uwaterloo.can <br>
+Kevin Zhang: k335zhan@uwaterloo.ca  <br>
 
-## User Documentations
+## User Documentation
+
+Our user documentation can be found at the [User Documentation Wiki page](https://git.uwaterloo.ca/p259li/team-102-19/-/wikis/User-Documentation)
 
 ## Design Documents
 
@@ -47,10 +47,3 @@ Jack's Journal: [here](https://docs.google.com/document/d/1Y_xi6vnFtppmlQoPglioq
 
 Jenny's Journal:
 [here](https://docs.google.com/document/d/1VOlwwRHXEFXQ-hS0aSxaAdvUbdPEKWkqK1w3lLcO8f0/edit)
-
-## Getting Started
-
-To get started with Notify, [download installer](/Notify 4.0.0.apk)
-
-Supporting device : Pixel 6 Pro
-
