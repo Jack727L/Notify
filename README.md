@@ -1,5 +1,6 @@
-#NOTIFY
-[]("images/Notify.png")
+#N OTIFY
+[](images/Notify.png)
+
 ## Product Description
 Discover Notify, a note-sharing application designed specifically for the University of Waterloo student community. Notify transcends traditional learning boundaries, creating a dynamic and collaborative educational environment where students can seamlessly share, access, and manage academic content.
 
