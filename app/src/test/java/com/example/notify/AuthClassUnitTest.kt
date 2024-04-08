@@ -96,7 +96,7 @@ class AuthenticationImplTest {
     }
 
     @Test
-    fun registerUserErro() = runBlocking {
+    fun registerUserError() = runBlocking {
         // Arrange
         val email = "6za@uwaterloo.ca"
         val password = "password123"

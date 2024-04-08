@@ -17,7 +17,7 @@ class HomePageViewModelTest {
 
 
     @Test
-    fun `retrievePdfFiles sets message when PDF files retrieved successfully`() {
+    fun retrievePdfFilesSuccess() {
         // Arrange
         val pdfFiles = listOf(PdfFile("Math235.pdf", "url", "uid", "Math", "235", "W", "2024", 0, 0, "uid", "pushkey", "basic math introduction", ""))
 
@@ -36,7 +36,7 @@ class HomePageViewModelTest {
     }
 
     @Test
-    fun `retrievePdfFiles sets message when no PDF files found`() {
+    fun retrievePdfFilesNoPdf() {
         // Arrange
         val callbackSlot = slot<PdfFilesRetrievalCallback>()
 
@@ -53,7 +53,7 @@ class HomePageViewModelTest {
     }
 
     @Test
-    fun `retrievePdfFiles sets error message`() {
+    fun retrievePdfFilesError() {
         // Arrange
         val errorMessage = "Error retrieving PDF files"
         val callbackSlot = slot<PdfFilesRetrievalCallback>()
