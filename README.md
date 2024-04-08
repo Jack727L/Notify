@@ -51,4 +51,6 @@ Jenny's Journal:
 ## Reflections
 Our reflections can be found at the [Reflections Wiki page](https://git.uwaterloo.ca/p259li/team-102-19/-/wikis/Reflections)
 
+## Project Proposal (User/Problem Definition)
+Our project proposal can be found at the [Project Proposal Wiki page](https://git.uwaterloo.ca/p259li/team-102-19/-/wikis/Project-Proposal)
 
