@@ -12,6 +12,8 @@ import org.mockito.Mockito.`when`
 import org.mockito.kotlin.any
 
 
+//Here we DO NOT need this since this is an external layer!!!!
+//Again it's calling firebase
 class FileRetrieveUnitTest {
     @Test
     fun fetchLikesForPushKey_ReturnsLikesSuccessfully() {

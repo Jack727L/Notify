@@ -10,7 +10,7 @@ class PdfFileTest {
     class PdfFileTest {
 
         @Test
-        fun `constructor creates object with correct properties`() {
+        fun testPdf() {
             // Arrange
             val expectedFileName = "test.pdf"
             val expectedDownloadUrl = "http://example.com/test.pdf"
