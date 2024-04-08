@@ -14,7 +14,7 @@ class HomePageViewModel : ViewModel() {
     // Implement your ViewModel logic here
     // This might include LiveData for dynamic content on the HomePage,
     // functions to handle button clicks, etc.
-    private val _message = MutableLiveData<String>()
+    public val _message = MutableLiveData<String>()
     private val storageReference = FirebaseStorage.getInstance().reference
     private val databaseReference = FirebaseDatabase.getInstance().getReference("pdfs/MATH235")
     private val fileUploadService = FileUploadImpl(storageReference, databaseReference)

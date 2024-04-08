@@ -29,7 +29,7 @@ class SearchModel(private val fileUploadService: FileUploadImpl) : ViewModel() {
     fun onSearchTextChange(text: String) {
         _searchText.value = text
     }
-    private val _pdfFiles = MutableStateFlow<List<PdfFile>>(emptyList())
+    var _pdfFiles = MutableStateFlow<List<PdfFile>>(emptyList())
     init {
         val storageReference = FirebaseStorage.getInstance().reference
         val databaseReference = FirebaseDatabase.getInstance().getReference("pdfs")
@@ -79,7 +79,7 @@ class SearchModel(private val fileUploadService: FileUploadImpl) : ViewModel() {
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    private fun calculateScore(pdfFile: PdfFile, query: String): Int {
+    fun calculateScore(pdfFile: PdfFile, query: String): Int {
         var score = 0
         val lowerCaseQuery = query.lowercase()
 

@@ -30,6 +30,9 @@ import org.mockito.kotlin.whenever
 //assertNotEquals
 //assertFalse
 
+
+//Here we DO NOT need this since this is an external layer!!!!
+//The authentication is calling firebase
 class AuthenticationImplTest {
 
     private val mockFirebaseAuth: FirebaseAuth = mock()
@@ -37,7 +40,7 @@ class AuthenticationImplTest {
     private val authImpl = AuthenticationImpl(mockFirebaseAuth, mockDatabaseReference)
 
     @Test
-    fun `loginUser emits Success Resource`() = runBlocking {
+    fun loginUser() = runBlocking {
         // Arrange
         val email = "j2466zha@uwaterloo.ca"
         val password = "123456"
@@ -53,7 +56,7 @@ class AuthenticationImplTest {
     }
 
     @Test
-    fun `registerUser emits Success Resource`() = runBlocking {
+    fun registerUser() = runBlocking {
         // Arrange
         val email = "test@uwaterloo.ca"
         val password = "password123"
@@ -77,7 +80,7 @@ class AuthenticationImplTest {
     }
 
     @Test
-    fun `loginUser emits Error Resource on failure`() = runBlocking {
+    fun loginUserError() = runBlocking {
         // Arrange
         val email = "j2466zha@uwaterloo.ca"
         val password = "wrongpassword"
@@ -93,7 +96,7 @@ class AuthenticationImplTest {
     }
 
     @Test
-    fun `registerUser emits Error Resource on failure`() = runBlocking {
+    fun registerUserErro() = runBlocking {
         // Arrange
         val email = "6za@uwaterloo.ca"
         val password = "password123"
